@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.bluecatlee.gs4d.pay.mapper.PayParamLogMapper">
+  <resultMap id="BaseResultMap" type="com.github.bluecatlee.gs4d.pay.entity.PayParamLog">
+    <id column="series" jdbcType="BIGINT" property="series" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="channel" jdbcType="VARCHAR" property="channel" />
+    <result column="request_date" jdbcType="TIMESTAMP" property="requestDate" />
+    <result column="response_date" jdbcType="TIMESTAMP" property="responseDate" />
+    <result column="response_code" jdbcType="VARCHAR" property="responseCode" />
+    <result column="response_msg" jdbcType="VARCHAR" property="responseMsg" />
+    <result column="thread_id" jdbcType="VARCHAR" property="threadId" />
+    <result column="ip" jdbcType="VARCHAR" property="ip" />
+    <result column="tenant_num_id" jdbcType="BIGINT" property="tenantNumId" />
+    <result column="plat_type" jdbcType="SMALLINT" property="platType" />
+    <result column="operat_type" jdbcType="VARCHAR" property="operatType" />
+    <result column="pay_app_key" jdbcType="VARCHAR" property="payAppKey" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.github.bluecatlee.gs4d.pay.entity.PayParamLogWithBLOBs">
+    <result column="request_params" jdbcType="LONGVARCHAR" property="requestParams" />
+    <result column="response_params" jdbcType="LONGVARCHAR" property="responseParams" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    series, out_trade_no, channel, request_date, response_date, response_code, response_msg, 
+    thread_id, ip, tenant_num_id, plat_type, operat_type, pay_app_key
+  </sql>
+  <sql id="Blob_Column_List">
+    request_params, response_params
+  </sql>
+  <insert id="insert" parameterType="com.github.bluecatlee.gs4d.pay.entity.PayParamLogWithBLOBs">
+    insert into pay_param_log (series, out_trade_no, channel, 
+      request_date, response_date, response_code, 
+      response_msg, thread_id, ip, 
+      tenant_num_id, plat_type, operat_type, 
+      pay_app_key, request_params, response_params
+      )
+    values (#{series,jdbcType=BIGINT}, #{outTradeNo,jdbcType=VARCHAR}, #{channel,jdbcType=VARCHAR}, 
+      #{requestDate,jdbcType=TIMESTAMP}, #{responseDate,jdbcType=TIMESTAMP}, #{responseCode,jdbcType=VARCHAR}, 
+      #{responseMsg,jdbcType=VARCHAR}, #{threadId,jdbcType=VARCHAR}, #{ip,jdbcType=VARCHAR}, 
+      #{tenantNumId,jdbcType=BIGINT}, #{platType,jdbcType=SMALLINT}, #{operatType,jdbcType=VARCHAR}, 
+      #{payAppKey,jdbcType=VARCHAR}, #{requestParams,jdbcType=LONGVARCHAR}, #{responseParams,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+
+</mapper>

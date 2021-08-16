@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://code.alibabatech.com/schema/dubbo
+                           http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+    <dubbo:application name="gs4d_sequenceService-provider"/>
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry protocol="zookeeper" address="${zk.sequence.host.port}"/>
+
+    <!-- 用dubbo协议在20880端口暴露服务 -->
+    <dubbo:protocol name="dubbo" port="${dubbo.service.port}" />
+
+    <dubbo:provider actives="1000" accepts="1100" threads="1200"  />
+
+    <dubbo:service interface="com.github.bluecatlee.gs4d.sequence.service.SequenceActionService" ref="sequenceActionService"  timeout="20000"/>
+
+    <bean id="sequenceActionService" class="com.github.bluecatlee.gs4d.sequence.service.impl.SequenceActionServiceImpl"/>
+
+</beans>

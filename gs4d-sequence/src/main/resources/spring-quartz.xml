@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+    <!-- sequenceTime更新和sequence重置 -->
+    <bean id="sequenceResetJob" class="com.github.bluecatlee.gs4d.sequence.task.UpdateSequenceTime" />
+    <!-- 检测sequenceTime -->
+    <bean id="monitorSequenceTimeJob" class="com.github.bluecatlee.gs4d.sequence.task.DbSequenceTimeListener" />
+    <!-- autoSequence重置 -->
+    <bean id="autoSequenceJob" class="com.github.bluecatlee.gs4d.sequence.task.AutoSequenceClearListener" />
+
+    <bean id="sequenceResetJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetObject">
+                    <ref bean="sequenceResetJob" />
+                </property>
+                <property name="targetMethod">
+                    <value>update</value>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0 55 23 * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="monitorSequenceTimeJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetObject">
+                    <ref bean="monitorSequenceTimeJob" />
+                </property>
+                <property name="targetMethod">
+                    <value>listenSequenceTime</value>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+           <value>0 30 * * * ?</value>
+        </property>
+    </bean>
+
+    <bean id="autoSequenceJobTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+        <property name="jobDetail">
+            <bean class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+                <property name="targetObject">
+                    <ref bean="autoSequenceJob" />
+                </property>
+                <property name="targetMethod">
+                    <value>listenAutoSequenceClear</value>
+                </property>
+            </bean>
+        </property>
+        <property name="cronExpression">
+            <value>0 01 00 * * ?</value>
+        </property>
+    </bean>
+
+    <bean name="startQuertz" lazy-init="false" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="triggers">
+            <list>
+                <ref bean="sequenceResetJobTrigger" />              <!-- factory bean -->
+                <ref bean="monitorSequenceTimeJobTrigger" />
+                <ref bean="autoSequenceJobTrigger" />
+            </list>
+        </property>
+    </bean>
+
+</beans>

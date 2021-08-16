@@ -1,0 +1,9 @@
+#spring:
+#  application:
+#    name: pay
+#  cloud:
+#    config:
+#      name: db,springdubbo,redis,zk,log
+#      profile: test
+#      uri:
+#      - http://127.0.0.1:9999

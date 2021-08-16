@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: pay
+
+  dubbo:
+    protocol:
+      port: 33802
+
+
+server:
+  port: 8077
+  servlet:
+    context-path: /pay
+
+dubbo:
+  zookeeper:
+    host:
+      port: 127.0.0.1:8888
+
+config:
+  paymentTypes:
+    0: testPaymentImpl
+
+restTemplateConnectTimeout: 60000
+restTemplateReadTimeout: 60000

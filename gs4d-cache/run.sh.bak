@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#可以不使用pom管理依赖
+
+java -Xms256m -Xmx1600m -Dsystem.name=cache -Dprint.full.message=true -Dspring.profiles.active=test
+    -Ddisconf.env=test -Ddubbo.shutdown.hook=true -Ddubbo.reference.check=false
+    -classpath /usr/local/cache/classes:/usr/local/cache/lib/* com.github.bluecatlee.gs4d.cache.CacheMain

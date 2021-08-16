@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+		<meta charset="UTF-8" />
+		<title>接口测试页</title>
+<!--		<link rel="stylesheet" href="css/index.css" />-->
+		<script src="js/jquery-1.10.2.min.js" type="text/javascript"></script>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('#sysNumId').change(function() {
+					$.post("apiTools/findApiNameListBySysNumId", {
+							"sysNumId": $("#sysNumId").val()
+						},
+						function(result) {
+							var obj, i;
+							if(result.isSuccess) {
+								obj = document.getElementById('apiname');
+								obj.options.length = 1;
+								for(i = 0; i < result.commonCallTableInfoBySysNumId.length; i++) {
+									obj.options.add(new Option(result.commonCallTableInfoBySysNumId[i].funcname, result.commonCallTableInfoBySysNumId[i].cmd));
+								}
+							} else {
+								alert("通过所属系统获取失败!");
+							}
+
+						}, "json")
+				})
+			});
+
+			$(document).ready(function() {
+				$('#apiname').change(function() {
+					$.post("/apiTools/findByCmd", {
+							"cmd": $("#apiname").val()
+						},
+						function(result) {
+							if(result.isSuccess) {
+								$("#cmd").val(result.commonCallTableInfoByCmd.cmd);
+								$("#method").val(result.commonCallTableInfoByCmd.funcname);
+								$("#params").val(result.commonCallTableInfoByCmd.requestSample);
+							} else {
+								alert("通过CMD获取失败!");
+							}
+						}, "json")
+				})
+			});
+
+			$(document).ready(function() {
+				$("#showButton").click(function() {
+					$.post("apiTools/queryApiNameByCmd", {
+							"cmd": $("#cmd").val()
+						},
+						function(result) {
+							if(result.isSuccess) {
+								$("#params").val(result.commonCallTableInfoByCmd.requestSample);
+								$("#method").val(result.commonCallTableInfoByCmd.funcname);
+								$("#sysNumId").val(result.commonCallTableInfoByCmd.sysNumId);
+							} else {
+								alert("获取失败!");
+							}
+						}, "json")
+				});
+			})
+
+			$(document).ready(function() {
+				$("#methodButton").click(function() {
+					$.post("apiTools/queryApiNameByFuncname", {
+							"funcname": $("#method").val()
+						},
+						function(result) {
+							if(result.isSuccess) {
+								$("#params").val(result.commonCallTableInfoByFuncname.requestSample);
+								$("#cmd").val(result.commonCallTableInfoByFuncname.cmd);
+								$("#sysNumId").val(result.commonCallTableInfoByFuncname.sysNumId);
+							} else {
+								alert("获取失败!");
+							}
+						}, "json")
+				});
+			})
+
+			function checkForm() {
+				var convertFlag = 'N';
+				if($("#isConvertFlag").is(':checked') == true) {
+					convertFlag = 'Y';
+				};
+				var method = $("#method").val();
+				var params = $("#params").val();
+				var appKey = $("#appKey").val();
+				$.ajax({
+					type: "POST",
+					url: "apiTools/execute",
+					data: {
+						method: method,
+						params: params,
+						app_key: appKey,
+						convert_flag: convertFlag
+					},
+					datatype: "json",
+					success: function(data) {
+						$("#resultShow").val(JSON.stringify(data));
+					},
+					error: function() {
+						alert("访问出错");
+					}
+				});
+			}
+
+			function generateDocParams() {
+				var cmd = $("#cmd").val();
+				var method = $("#method").val();
+				var params = $("#params").val();
+				var resultParams = $("#resultShow").val();
+				var appKey = $("#appKey").val();
+				var functionNumId = $("#functionNumId").val();
+				var is_cover = 0;
+				if($("#isCheckOver").attr("checked") == true) {
+					is_cover = 1;
+				}
+				$.ajax({
+					type: "POST",
+					url: "apiTools/createDocument",
+					data: {
+						method: method,
+						params: params,
+						resultParams: resultParams,
+						app_key: appKey,
+						functionNumId: functionNumId,
+						is_cover: is_cover,
+						cmd: cmd
+					},
+					datatype: "json",
+					success: function(data) {
+						$("#resultParams").val(JSON.stringify(data));
+					},
+					error: function() {
+						alert("访问出错");
+					}
+				});
+			}
+
+			function clearResult() {
+				$("#resultShow").val("");
+			}
+
+			function clearDocParamsResult() {
+				$("#resultParams").val("");
+			}
+		</script>
+	</head>
+
+	<body>
+		<div class="bodyContainer">
+			<div class="headBox">
+				<div class="logo"></div>
+			</div>
+			<div class="formWarper">
+				<div class="cat"></div>
+				<div class="formBox">
+					<div class="cell firstcell">
+						<div class="box1">CMD</div>
+						<input type="text" class="box2" id="cmd" name="cmd">
+						<button id="showButton" class="box3">查询</button>
+					</div>
+					<div class="cell">
+						<div class="box1">服务方法</div>
+						<input type="text" class="box2" id="method" name="method">
+						<button class="box3" id="methodButton">查询</button>
+					</div>
+					<div class="cell">
+						<div class="box1">系统名称</div>
+						<select class="box2 changeWidth" id="sysNumId" name="sysNumId">
+							<option value="">--请选择服务--</option>
+							<!-- <c:forEach items="${exArcSystemList}" var="exArcSystem"> -->
+							<!-- <option class="chooseLi" value="${exArcSystem.sysNumId}">${exArcSystem.sysName}</option> -->
+							<!-- </c:forEach> -->
+							<option value="1">测试服务</option>
+						</select>
+					</div>
+					<div class="cell">
+						<div class="box1">方法全称</div>
+						<select class="box2 changeWidth" id="apiname" name="apiname">
+							<option value="">-----请选择-----</option>		
+						</select>
+					</div>
+					<div class="cell">
+						<div class="box1">APPKEY</div>
+						<input type="text" class="box2" id="appKey" name="appKey" value="6001" >
+						<div class="check">
+							<input type="checkbox" id="isConvertFlag" name="isConvertFlag" />
+							<span>T驼峰JSON</span>
+						</div>
+					</div>
+					<div class="cell2">
+						<div class="tab1">请求参数示例</div>
+						<textarea class="tab2" id="params" name="params"></textarea>
+					</div>
+					<div class="cell distance">
+						<div class="box1"></div>
+						<button class="box4"  id="apiTestButton" onclick="checkForm()">提交测试</button>
+						<button class="box3 changbg" onclick="clearResult()">清空</button>
+					</div>
+					<div class="cell2">
+						<div class="tab1">返回结果</div>
+						<textarea class="tab2" id="resultShow" name="resultShow"></textarea>
+					</div>
+					<div class="cell2">
+						<div class="tab1">输出参数示例</div>
+						<textarea class="tab2" id="resultParams" name="resultParams"></textarea>
+					</div>
+					<div class="cell distance">
+						<div class="box1"></div>
+						<button class="box4"  id="generatJsonButton" onclick="generateDocParams()">生成文档参数</button>
+						<button class="box4 bigwidth changbg" onclick="clearDocParamsResult()">清空文档参数结果</button>
+						<div class="check">
+							<input type="checkbox" id="isCheckOver"/>
+							<span>是否覆盖</span>
+						</div>
+					</div>
+					<!--<div class="cell">
+						<div class="box1">接口编号</div>
+						<input type="text" class="box2" id="functionNumId" name="functionNumId" >
+					</div>-->
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

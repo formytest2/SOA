@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.bluecatlee.gs4d.pay.mapper.PayOrderInfoMapper">
+  <resultMap id="BaseResultMap" type="com.github.bluecatlee.gs4d.pay.entity.PayOrderInfo">
+    <id column="series" jdbcType="BIGINT" property="series" />
+    <result column="tenant_num_id" jdbcType="BIGINT" property="tenantNumId" />
+    <result column="merchant_id" jdbcType="BIGINT" property="merchantId" />
+    <result column="sub_unit_num_id" jdbcType="BIGINT" property="subUnitNumId" />
+    <result column="plat_type" jdbcType="INTEGER" property="platType" />
+    <result column="src_out_trade_no" jdbcType="VARCHAR" property="srcOutTradeNo" />
+    <result column="out_trade_no" jdbcType="VARCHAR" property="outTradeNo" />
+    <result column="request_no" jdbcType="VARCHAR" property="requestNo" />
+    <result column="transaction_id" jdbcType="VARCHAR" property="transactionId" />
+    <result column="total_fee" jdbcType="DOUBLE" property="totalFee" />
+    <result column="trade_status" jdbcType="VARCHAR" property="tradeStatus" />
+    <result column="trade_type" jdbcType="TINYINT" property="tradeType" />
+    <result column="device_info" jdbcType="VARCHAR" property="deviceInfo" />
+    <result column="close_sign" jdbcType="TINYINT" property="closeSign" />
+    <result column="create_dtme" jdbcType="TIMESTAMP" property="createDtme" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_user_id" jdbcType="BIGINT" property="createUserId" />
+    <result column="data_sign" jdbcType="TINYINT" property="dataSign" />
+    <result column="item_body" jdbcType="VARCHAR" property="itemBody" />
+    <result column="openid" jdbcType="VARCHAR" property="openid" />
+    <result column="attach" jdbcType="VARCHAR" property="attach" />
+    <result column="cancel_sign" jdbcType="TINYINT" property="cancelSign" />
+    <result column="subject" jdbcType="VARCHAR" property="subject" />
+    <result column="pay_app_key" jdbcType="VARCHAR" property="payAppKey" />
+    <result column="create_ip" jdbcType="VARCHAR" property="createIp" />
+    <result column="trade_status_res" jdbcType="VARCHAR" property="tradeStatusRes" />
+    <result column="channel" jdbcType="VARCHAR" property="channel" />
+    <result column="txndate" jdbcType="VARCHAR" property="txndate" />
+    <result column="txntime" jdbcType="VARCHAR" property="txntime" />
+    <result column="tranId" jdbcType="VARCHAR" property="tranid" />
+    <result column="business_callback_status" jdbcType="TINYINT" property="businessCallbackStatus" />
+    <result column="business_callback" jdbcType="VARCHAR" property="businessCallback" />
+    
+    
+  </resultMap>
+  <sql id="Base_Column_List">
+    series, tenant_num_id, merchant_id, sub_unit_num_id, plat_type, src_out_trade_no, out_trade_no, request_no,
+    transaction_id, total_fee, trade_status, trade_type, device_info, close_sign, create_dtme, 
+    update_time, create_user_id, data_sign, item_body, openid, attach, cancel_sign, subject, 
+    pay_app_key, create_ip, trade_status_res, channel, txndate, txntime, tranId,business_callback_status,business_callback
+  </sql>
+  <select id="selectProcessingData" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from pay_order_info
+    where trade_status='11' and create_dtme > CURRENT_DATE
+  </select>
+
+  <update id="updateTradeStatusByPrimaryKey" parameterType="com.github.bluecatlee.gs4d.pay.entity.PayOrderInfo">
+    update pay_order_info
+    set
+      transaction_id = #{transactionId,jdbcType=VARCHAR},
+      trade_status = #{tradeStatus,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where series = #{series,jdbcType=BIGINT}
+  </update>
+
+  <select id="selectByPlatTypeAndOutTradeNo" parameterType="com.github.bluecatlee.gs4d.pay.entity.PayOrderInfo" resultMap="BaseResultMap">
+    select
+     series, trade_status, tranId,txndate,channel,total_fee 
+    from pay_order_info
+    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
+    and plat_type = #{platType,jdbcType=INTEGER}
+    and trade_status in (1,11)
+  </select>
+
+  <select id="selectPayInfoByOutTradeNo" parameterType="com.github.bluecatlee.gs4d.pay.entity.PayOrderInfo" resultMap="BaseResultMap">
+    select
+     series,tenant_num_id, total_fee, transaction_id, create_dtme, txndate, txntime,channel
+    from pay_order_info
+    where out_trade_no = #{outTradeNo,jdbcType=VARCHAR}
+    and plat_type = #{platType,jdbcType=INTEGER}
+    and trade_status =1
+    and trade_type = #{tradeType,jdbcType=TINYINT}
+  </select>
+
+</mapper>

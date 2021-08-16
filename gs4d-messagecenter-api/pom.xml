@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.bluecatlee.gs4d</groupId>
+    <artifactId>gs4d-messagecenter-api</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <description>消息api</description>
+
+    <parent>
+        <groupId>com.github.bluecatlee.gs4d</groupId>
+        <artifactId>gs4d-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../gs4d-parent/pom.xml</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.bluecatlee.gs4d</groupId>
+            <artifactId>gs4d-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tranboot</groupId>
+            <artifactId>txc-client</artifactId>
+            <version>4.0.5-release</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/libs/txc-client-4.0.5-release.jar</systemPath>
+        </dependency>
+
+<!--        <dependency>-->
+<!--            <groupId>com.taobao.txc</groupId>-->
+<!--            <artifactId>txc-client</artifactId>-->
+<!--            <version>2.0.48</version>-->
+<!--        </dependency>-->
+
+    </dependencies>
+
+</project>

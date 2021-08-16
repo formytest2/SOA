@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#可以不使用pom管理依赖
+
+java -Xms256m -Xmx512m -Dspring.profiles.active=test -Ddubbo.shutdown.hook=true -Ddubbo.qos.port=33333 -Ddubbo.reference.check=false
+-classpath /usr/local/sequenceService/classes:/usr/local/sequenceService/lib/* com.github.bluecatlee.gs4d.sequence.StartProvider

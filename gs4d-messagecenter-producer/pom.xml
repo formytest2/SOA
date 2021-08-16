@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.github.bluecatlee.gs4d</groupId>
+    <artifactId>gs4d-messagecenter-producer</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+    <description>消息生产者</description>
+
+    <parent>
+        <groupId>com.github.bluecatlee.gs4d</groupId>
+        <artifactId>gs4d-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath>../gs4d-parent/pom.xml</relativePath>
+    </parent>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.bluecatlee.gs4d</groupId>
+            <artifactId>gs4d-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bluecatlee.gs4d</groupId>
+            <artifactId>gs4d-messagecenter-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bluecatlee.gs4d</groupId>
+            <artifactId>gs4d-sequence</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bluecatlee.gs4d</groupId>
+            <artifactId>gs4d-export-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bluecatlee.gs4d</groupId>
+            <artifactId>distributed-transaction-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.bluecatlee.gs4d</groupId>
+            <artifactId>gs4d-monitor-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <!---->
+
+<!--        <dependency>-->
+<!--            <groupId>com.alibaba</groupId>-->
+<!--            <artifactId>fastjson</artifactId>-->
+<!--            <version>1.2.62</version>-->
+<!--        </dependency>-->
+
+        <!-- RocketMQ -->
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-client</artifactId>
+            <version>3.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-common</artifactId>
+            <version>3.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-remoting</artifactId>
+            <version>3.2.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.rocketmq</groupId>
+            <artifactId>rocketmq-tools</artifactId>
+            <version>3.2.6</version>
+            <exclusions>
+                <exclusion> <!-- 这里面有jenkins的依赖 下载不下来 故而排除 -->
+                    <groupId>org.kohsuke</groupId>
+                    <artifactId>github-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.aliyun.openservices</groupId>
+            <artifactId>ons-client</artifactId>
+            <version>1.6.0.Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tranboot</groupId>
+            <artifactId>txc-client</artifactId>
+            <version>4.0.5-release</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/libs/txc-client-4.0.5-release.jar</systemPath>
+        </dependency>
+
+    </dependencies>
+
+</project>

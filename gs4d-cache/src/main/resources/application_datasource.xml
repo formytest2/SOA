@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd"
+       default-lazy-init="true">
+
+    <bean id="commonDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${common.jdbc.driver}" />
+        <property name="url" value="${common.jdbc.url}"/>
+        <property name="username" value="${common.jdbc.username}"/>
+        <property name="password" value="${common.jdbc.password}"/>
+        <property name="maxActive" value="${common.jdbc.pool.maxActive}" />
+        <property name="initialSize" value="${common.jdbc.pool.initialSize}" />
+        <property name="maxWait" value="${druid.maxWait}" />
+        <property name="minIdle" value="${common.jdbc.pool.minIdle}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}"/>
+        <property name="maxEvictableIdleTimeMillis" value="${druid.maxEvictableIdleTimeMillis}"/>
+        <property name="timeBetweenConnectErrorMillis" value="${druid.timeBetweenConnectErrorMillis}"/>
+        <property name="keepAlive" value="${druid.keepAlive}" />
+        <property name="validationQuery" value="SELECT 'x'"/>
+        <property name="testWhileIdle" value="${druid.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${druid.testOnBorrow}"/>
+        <property name="testOnReturn" value="${druid.testOnReturn}"/>
+        <property name="poolPreparedStatements" value="${druid.poolPreparedStatements}"/>
+        <property name="maxOpenPreparedStatements" value="${druid.maxOpenPreparedStatements}"/>
+        <property name="removeAbandoned" value="${druid.removeAbandoned}" />
+        <property name="removeAbandonedTimeout" value="${druid.removeAbandonedTimeout}" />
+        <property name="logAbandoned" value="${druid.logAbandoned}" />
+        <property name="proxyFilters">
+            <list>
+                <ref bean="log-filter"/>
+                <ref bean="stat-filter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="masterDataDataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <property name="driverClassName" value="${master.data.jdbc.driver}" />
+        <property name="url" value="${master.data.jdbc.url}"/>
+        <property name="username" value="${master.data.jdbc.username}"/>
+        <property name="password" value="${master.data.jdbc.password}"/>
+        <property name="maxActive" value="${master.data.jdbc.pool.maxActive}" />
+        <property name="initialSize" value="${master.data.jdbc.pool.initialSize}" />
+        <property name="maxWait" value="${druid.maxWait}" />
+        <property name="minIdle" value="${master.data.jdbc.pool.minIdle}" />
+        <property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}"/>
+        <property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}"/>
+        <property name="maxEvictableIdleTimeMillis" value="${druid.maxEvictableIdleTimeMillis}" />
+        <property name="timeBetweenConnectErrorMillis" value="${druid.timeBetweenConnectErrorMillis}"/>
+        <property name="validationQuery" value="select 1"/>
+        <property name="testWhileIdle" value="${druid.testWhileIdle}"/>
+        <property name="testOnBorrow" value="${druid.testOnBorrow}"/>
+        <property name="testOnReturn" value="${druid.testOnReturn}"/>
+        <property name="poolPreparedStatements" value="${druid.poolPreparedStatements}"/>
+        <property name="maxOpenPreparedStatements" value="${druid.maxOpenPreparedStatements}"/>
+        <property name="removeAbandoned" value="${druid.removeAbandoned}" />
+        <property name="removeAbandonedTimeout" value="${druid.removeAbandonedTimeout}" />
+        <property name="logAbandoned" value="${druid.logAbandoned}" />
+        <property name="keepAlive" value="${druid.keepAlive}" />
+        <property name="proxyFilters">
+            <list>
+                <ref bean="log-filter"/>
+                <ref bean="stat-filter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="stat-filter" class="com.alibaba.druid.filter.stat.StatFilter">
+        <property name="slowSqlMillis" value="500" />
+        <property name="logSlowSql" value="true" />
+        <property name="mergeSql" value="true" />
+    </bean>
+
+    <bean id="log-filter" class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+        <property name="dataSourceLogEnabled" value="true" />
+        <property name="connectionLogEnabled" value="true" />
+        <property name="statementLogEnabled" value="false" />
+        <property name="resultSetLogEnabled" value="false" />
+        <property name="statementExecutableSqlLogEnable" value="true" />
+    </bean>
+
+    <bean id="dataSource" class="com.github.bluecatlee.gs4d.common.datasource.DynamicDataSource">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <entry value-ref="commonDataSource" key="commonData"></entry>
+                <entry value-ref="masterDataDataSource" key="masterData"></entry>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="commonDataSource">
+        </property>
+    </bean>
+
+</beans>

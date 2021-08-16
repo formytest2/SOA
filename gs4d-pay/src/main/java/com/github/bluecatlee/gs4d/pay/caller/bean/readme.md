@@ -1,0 +1,1 @@
+todo 这个子包下的bean和网关gs4d-web用的bean是共用的 应该放到外部api模块中
