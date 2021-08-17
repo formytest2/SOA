@@ -204,7 +204,7 @@ public class SysRocketMqSendLogDao {
     }
 
     public List<SYS_ROCKET_MQ_SEND_LOG> queryUnHandledSendLogsByTopicAndTag(Long dataSign, String messageTopic, String messageTag, Long tenantNumId) {
-        List list = this.jdbcTemplate.query(deleteSql, new Object[]{dataSign, messageTopic, messageTag, tenantNumId}, new BeanPropertyRowMapper(SYS_ROCKET_MQ_SEND_LOG.class));
+        List list = this.jdbcTemplate.query(queryUnHandledSendLogsSql, new Object[]{dataSign, messageTopic, messageTag, tenantNumId}, new BeanPropertyRowMapper(SYS_ROCKET_MQ_SEND_LOG.class));
         return list;
     }
 
@@ -319,7 +319,7 @@ public class SysRocketMqSendLogDao {
 
     public List<SYS_ROCKET_MQ_SEND_LOG> queryByWorkflowId(Long workflowId) {
         String sql = "select SERIES,MESSAGE_ID,MESSAGE_KEY,MESSAGE_TOPIC,MESSAGE_TAG,MESSAGE_BODY,MESSAGE_NAME_ADDR,PRODUCER_NAME,CREATE_DTME,LAST_UPDTME,CREATE_USER_ID,CANCELSIGN,FAIL_DETAIL,TENANT_NUM_ID,DATA_SIGN,WORKFLOW_ID,INSTANCE_ID,STEP_ID,FROM_SYSTEM,MSG_STATUS,CONSUMER_SUCCESS,RETRY_TIMES,RESPONSE_DETAIL,LAST_UPDTME,CONSUMER_SUCCESS_TIME,ORDER_MESS_FLAG,TASK_TARGET,CLIENT_IP from SYS_ROCKET_MQ_SEND_LOG where workflow_id=? and msg_status=? limit 1000000";
-        List list = this.jdbcTemplate.query(sql, new Object[]{workflowId, Constants.eJ}, new BeanPropertyRowMapper(SYS_ROCKET_MQ_SEND_LOG.class));
+        List list = this.jdbcTemplate.query(sql, new Object[]{workflowId, Constants.transaction_pre_send}, new BeanPropertyRowMapper(SYS_ROCKET_MQ_SEND_LOG.class));
         return list;
     }
 

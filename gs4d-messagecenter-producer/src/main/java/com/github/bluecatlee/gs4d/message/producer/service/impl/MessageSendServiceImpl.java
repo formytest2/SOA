@@ -158,7 +158,7 @@ public class MessageSendServiceImpl extends AbstractMessageSendService implement
                         }
 
                         Long currentTime = System.currentTimeMillis();
-                        if (sysRocketMqSendLog != null && sysRocketMqSendLog.getMSG_STATUS() == Constants.eJ) {
+                        if (sysRocketMqSendLog != null && sysRocketMqSendLog.getMSG_STATUS() == Constants.transaction_pre_send) {
                             this.sysRocketMqSendLogDao.updateCreateUserId(sysRocketMqSendLog.getSERIES(), Constants.dO);
                             sysRocketMqSendLog.setCREATE_USER_ID(Constants.dO);
                             this.pushSysRocketMqSendLogToWorkFlowList(sysRocketMqSendLog);  // 将sysRocketMqSendLog追加到链表右边
@@ -542,7 +542,7 @@ public class MessageSendServiceImpl extends AbstractMessageSendService implement
         TransactionMessageConfirmResponse transactionMessageConfirmResponse = new TransactionMessageConfirmResponse();
 
         try {
-            List sysRocketMqSendLogList = new ArrayList();
+            List<SYS_ROCKET_MQ_SEND_LOG> sysRocketMqSendLogList = new ArrayList();
             List list = this.stringRedisTemplate.opsForList().range(MessageSendUtil.generateTranstionMessageKeyToRedis(transactionMessageConfirmRequest.getTransactionId()), 0L, -1L);
             if (list.isEmpty()) {
                 sysRocketMqSendLogList = this.sysRocketMqSendLogDao.queryByWorkflowId(transactionMessageConfirmRequest.getTransactionId());

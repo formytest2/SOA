@@ -24,8 +24,8 @@ public class Constants {
 
     public static final Long mess_flag_common = 0L;   // 普通消息
     public static final Long mess_flag_order = 1L;   // 顺序消息
-    public static final Long dJ = 2L;
-    public static final Long dM = 3L;
+    public static final Long mess_flag_job = 2L;     // 定时消息
+    public static final Long mess_flag_transaction = 3L;    // 事务消息
     public static final Integer dN = 5;
 
     public static final Long dO = 100L;
@@ -151,12 +151,12 @@ public class Constants {
     public static Integer eD = 8;   // 事务失败?
     public static Integer eE = 9;
 
-    public static Integer send_success = 1;       // 发送成功
-    public static Integer eF = 2;               // 预发送
-    public static Integer send_fail = 3;       // 发送失败
-    public static Integer send_cancel = 4;     // 取消发送
-    public static Integer eJ = 5;       // todo msg_status
-    public static Integer eK = 6;
+    public static Integer send_success = 1;              // 发送成功
+    public static Integer pre_send = 2;                   // 预发送
+    public static Integer send_fail = 3;                    // 发送失败
+    public static Integer send_cancel = 4;                  // 取消发送
+    public static Integer transaction_pre_send = 5;       // 事务消息预发送
+    public static Integer eK = 6;       // 事务消息取消？
 
     public static Long de = 1L;
     public static Long df = 2L;

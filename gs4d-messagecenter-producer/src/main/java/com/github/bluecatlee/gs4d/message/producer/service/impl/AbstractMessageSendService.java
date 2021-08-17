@@ -72,7 +72,7 @@ public abstract class AbstractMessageSendService {
 
         this.sysRocketMqSendLogDao.setSeries(sysRocketMqSendLog, simpleMessage.getTenantNumId());
         if (simpleMessage.getTransactionId() != null) {
-            sysRocketMqSendLog.setWORKFLOW_ID(simpleMessage.getTransactionId());
+            sysRocketMqSendLog.setWORKFLOW_ID(simpleMessage.getTransactionId());    // 如果有分布式事务id 则存到workflow_id字段
         } else {
             sysRocketMqSendLog.setWORKFLOW_ID(0L);
         }
@@ -121,16 +121,16 @@ public abstract class AbstractMessageSendService {
 
         sysRocketMqSendLog.setPRODUCER_NAME("");
         if (simpleMessage.getWorkFlowId() != null) {
-            sysRocketMqSendLog.setORDER_MESS_FLAG(Constants.dM);
+            sysRocketMqSendLog.setORDER_MESS_FLAG(Constants.mess_flag_transaction);
             sysRocketMqSendLog.setWORKFLOW_ID(simpleMessage.getWorkFlowId());
         } else {
             sysRocketMqSendLog.setORDER_MESS_FLAG(Constants.mess_flag_common);
         }
 
         if (simpleMessage.getTransactionId() != null) {
-            sysRocketMqSendLog.setMSG_STATUS(Constants.eJ);
+            sysRocketMqSendLog.setMSG_STATUS(Constants.transaction_pre_send);       // 事务消息
         } else {
-            sysRocketMqSendLog.setMSG_STATUS(Constants.eF);
+            sysRocketMqSendLog.setMSG_STATUS(Constants.pre_send);
         }
 
         return sysRocketMqSendLog;

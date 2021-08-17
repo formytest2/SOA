@@ -26,6 +26,7 @@
         <module>../gs4d-messagecenter-producer</module>
         <module>../gs4d-messagecenter-consumer</module>
         <module>../distributed-transaction-api</module>
+        <module>../distributed-transaction</module>
     </modules>
     <packaging>pom</packaging>
 

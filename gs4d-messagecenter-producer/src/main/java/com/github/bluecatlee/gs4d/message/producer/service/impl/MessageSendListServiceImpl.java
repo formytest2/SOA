@@ -206,7 +206,7 @@ public class MessageSendListServiceImpl extends AbstractMessageSendService imple
 
                 SYS_ROCKET_MQ_SEND_LOG sysRocketMqSendLog = new SYS_ROCKET_MQ_SEND_LOG();
                 this.assemble(sysRocketMqSendLog, simpleMessage);
-                sysRocketMqSendLog.setORDER_MESS_FLAG(Constants.dJ);
+                sysRocketMqSendLog.setORDER_MESS_FLAG(Constants.mess_flag_job);
                 sysRocketMqSendLog.setCONSUMER_SUCCESS_TIME(simpleMessage.getJobTargetTime());
                 list.add(sysRocketMqSendLog);
             }

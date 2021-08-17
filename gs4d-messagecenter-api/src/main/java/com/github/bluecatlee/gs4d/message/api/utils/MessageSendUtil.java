@@ -518,6 +518,16 @@ public class MessageSendUtil {
         return response;
     }
 
+    /**
+     * 预发送消息到多个topic
+     * @param topic     父topic 关联了多个子topic
+     * @param msgKey
+     * @param body
+     * @param systemId
+     * @param dataSign
+     * @param tenantNumId
+     * @return
+     */
     public static PrepOTMSimpleMessageSendResponse sendPrepOTMMsgUseThreadLocal(String topic, String msgKey, String body, Long systemId, Long dataSign, Long tenantNumId) {
         new PrepOTMSimpleMessageSendResponse();
 
@@ -557,6 +567,18 @@ public class MessageSendUtil {
         }
     }
 
+    /**
+     * 预发送消息到多个topic
+     * @param topic
+     * @param tag
+     * @param msgKey
+     * @param body
+     * @param systemId
+     * @param dataSign
+     * @param tenantNumId
+     * @param jdbcTemplate
+     * @return
+     */
     public static PrepOTMSimpleMessageSendResponse sendPrepOTMMsgUseThreadLocal(String topic, String tag, String msgKey, String body, Long systemId, Long dataSign, Long tenantNumId, JdbcTemplate jdbcTemplate) {
         new PrepOTMSimpleMessageSendResponse();
 
@@ -596,6 +618,11 @@ public class MessageSendUtil {
         }
     }
 
+    /**
+     * 预发送消息到多个topic
+     * @param message
+     * @return
+     */
     public static PrepOTMSimpleMessageSendResponse sendPrepOTMMsgUseThreadLocal(SimpleMessage message) {
         new PrepOTMSimpleMessageSendResponse();
 
@@ -637,6 +664,12 @@ public class MessageSendUtil {
         }
     }
 
+    /**
+     * 预发送消息到多个topic
+     * @param message
+     * @param jdbcTemplate
+     * @return
+     */
     public static PrepOTMSimpleMessageSendResponse sendPrepOTMMsgUseThreadLocal(SimpleMessage message, JdbcTemplate jdbcTemplate) {
         new PrepOTMSimpleMessageSendResponse();
 
@@ -675,6 +708,11 @@ public class MessageSendUtil {
         }
     }
 
+    /**
+     * 立即发送消息到多个topic
+     * @param message
+     * @return
+     */
     public static OTMSimpleMessageRightNowSendResponse sendSimpleOTMMessageRightNow(SimpleMessage message) {
         OTMSimpleMessageRightNowSendResponse response = new OTMSimpleMessageRightNowSendResponse();
 
@@ -720,6 +758,11 @@ public class MessageSendUtil {
         }
     }
 
+    /**
+     * 确认事务消息
+     * @param transactionId
+     * @return
+     */
     public static TransactionMessageConfirmResponse confirmTransactionMessage(Long transactionId) {
         TransactionMessageConfirmResponse response = new TransactionMessageConfirmResponse();
 
@@ -737,6 +780,11 @@ public class MessageSendUtil {
         return response;
     }
 
+    /**
+     * 取消事务消息
+     * @param transactionId
+     * @return
+     */
     public static TransactionMessageCancelResponse cancelTransactionMessage(Long transactionId) {
         TransactionMessageCancelResponse response = new TransactionMessageCancelResponse();
 

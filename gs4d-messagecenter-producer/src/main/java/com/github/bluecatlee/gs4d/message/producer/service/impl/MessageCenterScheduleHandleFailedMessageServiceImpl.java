@@ -31,9 +31,9 @@ import com.github.bluecatlee.gs4d.common.utils.BatchUtil;
 import com.github.bluecatlee.gs4d.message.producer.utils.Constants;
 import com.github.bluecatlee.gs4d.message.producer.utils.TransactionUtil;
 import com.github.bluecatlee.gs4d.monitor.api.request.MessageCenterErrorLogDealRequest;
-import com.github.bluecatlee.gs4d.transaction.request.MessagecenterRecallRequest;
-import com.github.bluecatlee.gs4d.transaction.response.MessagecenterRecallResponse;
-import com.github.bluecatlee.gs4d.transaction.service.MessagecenterRecallService;
+import com.github.bluecatlee.gs4d.transaction.api.request.MessagecenterRecallRequest;
+import com.github.bluecatlee.gs4d.transaction.api.response.MessagecenterRecallResponse;
+import com.github.bluecatlee.gs4d.transaction.api.service.MessagecenterRecallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,6 +110,11 @@ public class MessageCenterScheduleHandleFailedMessageServiceImpl implements Mess
 
     public static int ca = 1200;
 
+    /**
+     * 查询未处理的消息并处理
+     * @param noDealTransMessageFindRequest
+     * @return
+     */
     public NoDealTransMessageFindResponse findNoDealTransMessage(final NoDealTransMessageFindRequest noDealTransMessageFindRequest) {
         if (logger.isDebugEnabled()) {
             logger.debug("begin findNoDealTransMessage request:{}", JsonUtil.toJson(noDealTransMessageFindRequest));
@@ -144,16 +149,19 @@ public class MessageCenterScheduleHandleFailedMessageServiceImpl implements Mess
 
                                     try {
                                         ArrayList sysRocketMqSendLogList;
-                                        if (sysRocketMqSendLog.getMSG_STATUS() == Constants.eJ) {   // todo 事务
+                                        if (sysRocketMqSendLog.getMSG_STATUS() == Constants.transaction_pre_send) {
                                             MessagecenterRecallRequest messagecenterRecallRequest = new MessagecenterRecallRequest();
                                             messagecenterRecallRequest.setTransactionId(sysRocketMqSendLog.getWORKFLOW_ID());
                                             MessagecenterRecallResponse messagecenterRecallResponse = MessageCenterScheduleHandleFailedMessageServiceImpl.this.messagecenterRecallService.recallMessagecenter(messagecenterRecallRequest);
-                                            if (messagecenterRecallResponse.getCode() == MessagePack.OK && messagecenterRecallResponse.getState().equals(1L)) { //
+
+                                            if (messagecenterRecallResponse.getCode() == MessagePack.OK && messagecenterRecallResponse.getState().equals(1L)) {
+                                                // 如果transaction_log的transaction_state=1 说明数据库事务正常提交 此时可以发送消息
                                                 sysRocketMqSendLogList = new ArrayList();
                                                 sysRocketMqSendLog.setSTEP_ID(Constants.ez);
                                                 sysRocketMqSendLogList.add(sysRocketMqSendLog);
                                                 AbstractRocketMqUtil.send(sysRocketMqSendLogList, MessageCenterScheduleHandleFailedMessageServiceImpl.this.stringRedisTemplate);
                                             } else if (messagecenterRecallResponse.getCode() == MessagePack.OK && messagecenterRecallResponse.getState().equals(2L)) {
+                                                // 如果transaction_log的transaction_state=2 说明数据库事务异常 此时可以不能发送mq消息 记录事务失败日志 并删除消息发送日志
                                                 sysRocketMqSendLogList = new ArrayList();
                                                 sysRocketMqSendLogList.add(sysRocketMqSendLog);
                                                 sysRocketMqSendLog.setSTEP_ID(Constants.eE);

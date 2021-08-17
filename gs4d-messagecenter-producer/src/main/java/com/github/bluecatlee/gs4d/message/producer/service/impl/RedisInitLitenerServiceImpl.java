@@ -8,7 +8,7 @@ import com.github.bluecatlee.gs4d.message.producer.dao.SysRocketMqSendLogDao;
 import com.github.bluecatlee.gs4d.message.producer.dao.SysTransationFailedLogDao;
 import com.github.bluecatlee.gs4d.message.producer.model.REDIS_EXPIRED_KEY_TOPIC;
 import com.github.bluecatlee.gs4d.message.producer.service.RedisInitLitenerService;
-import com.github.bluecatlee.gs4d.transaction.service.MessagecenterRecallService;
+import com.github.bluecatlee.gs4d.transaction.api.service.MessagecenterRecallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

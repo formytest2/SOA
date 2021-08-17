@@ -26,6 +26,8 @@ public enum ExceptionType {
     DOE30052(-30052L, ExceptionTypeCategory.DATABASE_OPERATE_EXCEPTION, SubSystem.SUB_SYSTEM_IMPORT, "数据同步导入系统操作数据库异常"),
     DOE30054(-30054L, ExceptionTypeCategory.DATABASE_OPERATE_EXCEPTION, SubSystem.SUB_SYSTEM_MSSSAGECENTER, "消息中心获取日志表实体异常"),
 
+    DOE30084(-30084L, ExceptionTypeCategory.DATABASE_OPERATE_EXCEPTION, SubSystem.SUB_SYSTEM_TRANSACTION, "分布式事务服务端数据库操作失败!"),
+
     BE40071(-40071L, ExceptionTypeCategory.BUSINESS_EXCEPTION, SubSystem.SUB_SYSTEM_CACHE, "数据库中无指定资料，获取缓存失败！"),
     BE40072(-40072L, ExceptionTypeCategory.BUSINESS_EXCEPTION, SubSystem.SUB_SYSTEM_CACHE, "数据库中存在多比指定资料，获取缓存失败！"),
     BE40073(-40073L, ExceptionTypeCategory.BUSINESS_EXCEPTION, SubSystem.SUB_SYSTEM_CACHE, "从本地内存缓存中获取数据源信息出错！"),
@@ -125,6 +127,7 @@ public enum ExceptionType {
         public static String SUB_SYSTEM_EXPORT = "export";
         public static String SUB_SYSTEM_IMPORT = "import";
         public static String SUB_SYSTEM_MSSSAGECENTER = "messagecenter";
+        public static String SUB_SYSTEM_TRANSACTION = "transaction";
 
         private SubSystem() {
         }

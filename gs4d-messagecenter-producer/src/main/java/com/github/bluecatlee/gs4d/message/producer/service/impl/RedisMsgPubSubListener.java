@@ -21,9 +21,9 @@ import com.github.bluecatlee.gs4d.message.producer.model.SYS_ROCKET_MQ_SEND_LOG;
 import com.github.bluecatlee.gs4d.message.producer.utils.AbstractRocketMqUtil;
 import com.github.bluecatlee.gs4d.message.producer.utils.Constants;
 import com.github.bluecatlee.gs4d.monitor.api.request.MessageCenterErrorLogDealRequest;
-import com.github.bluecatlee.gs4d.transaction.request.MessagecenterRecallRequest;
-import com.github.bluecatlee.gs4d.transaction.response.MessagecenterRecallResponse;
-import com.github.bluecatlee.gs4d.transaction.service.MessagecenterRecallService;
+import com.github.bluecatlee.gs4d.transaction.api.request.MessagecenterRecallRequest;
+import com.github.bluecatlee.gs4d.transaction.api.response.MessagecenterRecallResponse;
+import com.github.bluecatlee.gs4d.transaction.api.service.MessagecenterRecallService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -154,17 +154,20 @@ public class RedisMsgPubSubListener extends JedisPubSub {
             messageCenterErrorLogDealRequest.setTenantNumId(sysRocketMqSendLog.getTENANT_NUM_ID());
             messageCenterErrorLogDealRequest.setDataSign(sysRocketMqSendLog.getDATA_SIGN());
             ArrayList list;
-            if(sysRocketMqSendLog.getMSG_STATUS() == Constants.eJ) {
+            if(sysRocketMqSendLog.getMSG_STATUS() == Constants.transaction_pre_send) {
                 MessagecenterRecallRequest messagecenterRecallRequest = new MessagecenterRecallRequest();
-                messagecenterRecallRequest.setTransactionId(sysRocketMqSendLog.getWORKFLOW_ID());
-                MessagecenterRecallResponse messagecenterRecallResponse = this.messagecenterRecallService.recallMessagecenter(messagecenterRecallRequest);
+                messagecenterRecallRequest.setTransactionId(sysRocketMqSendLog.getWORKFLOW_ID());   // 分布式事务id
+                MessagecenterRecallResponse messagecenterRecallResponse = this.messagecenterRecallService.recallMessagecenter(messagecenterRecallRequest); // 【事务回查】
+
                 if(messagecenterRecallResponse.getCode().longValue() == MessagePack.OK && messagecenterRecallResponse.getState().longValue() == 1L) {
+                    // 如果transaction_log的transaction_state=1 说明数据库事务正常提交 此时可以发送消息
                     list = new ArrayList();
                     sysRocketMqSendLog.setSTEP_ID(Constants.ez);
                     list.add(sysRocketMqSendLog);
                     AbstractRocketMqUtil.send(list, this.stringRedisTemplate);
                     messagePack.setMessage("事务回查成功。序号" + series);
                 } else if(messagecenterRecallResponse.getCode().longValue() == MessagePack.OK && messagecenterRecallResponse.getState().longValue() == 2L) {
+                    // 如果transaction_log的transaction_state=2 说明数据库事务异常 此时可以不能发送mq消息 记录事务失败日志 并删除消息发送日志
                     list = new ArrayList();
                     list.add(sysRocketMqSendLog);
                     sysRocketMqSendLog.setSTEP_ID(Constants.eE);
