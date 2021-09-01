@@ -27,6 +27,7 @@
         <module>../gs4d-messagecenter-consumer</module>
         <module>../distributed-transaction-api</module>
         <module>../distributed-transaction</module>
+        <module>../txc-client</module>
     </modules>
     <packaging>pom</packaging>
 

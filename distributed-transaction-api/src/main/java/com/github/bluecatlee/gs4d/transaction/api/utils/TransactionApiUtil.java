@@ -6,12 +6,12 @@ import java.util.Map;
 public class TransactionApiUtil {
     public static final String redisKeyStart = "Transaction_";
 
+    // 分布式事务rollback的topic和tag
     public static final String mqTopic = "TRANSACTION_001";
-
     public static final String mqTag = "TRANSACTION_001_1";
 
+    // 分布式事务commit的topic和tag
     public static final String mqUpdateSqlTopic = "TRANSACTION_002";
-
     public static final String mqUpdateSqlTag = "TRANSACTION_002_1";
 
     public static final String txc = "txc";
