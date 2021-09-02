@@ -1,20 +1,14 @@
 package com.tranboot.client.model.dbsync;
 
-import com.tranboot.client.druid.sql.ast.SQLExpr;
-import com.tranboot.client.druid.sql.ast.SQLStatement;
-import com.tranboot.client.druid.sql.ast.expr.SQLBinaryOpExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLInListExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLLiteralExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLPropertyExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLVariantRefExpr;
-import com.tranboot.client.druid.sql.ast.statement.SQLExprTableSource;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateSetItem;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement.ValuesClause;
-import com.tranboot.client.druid.sql.visitor.SQLASTVisitor;
-import com.tranboot.client.druid.sql.visitor.SQLASTVisitorAdapter;
+import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.*;
+import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
+import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
+import com.alibaba.druid.sql.ast.statement.SQLUpdateSetItem;
+import com.alibaba.druid.sql.ast.statement.SQLUpdateStatement;
+import com.alibaba.druid.sql.visitor.SQLASTVisitor;
+import com.alibaba.druid.sql.visitor.SQLASTVisitorAdapter;
 import com.tranboot.client.sqlast.MySQLRewriteVistorAop;
 import com.tranboot.client.sqlast.OracleRewriteVistorAop;
 import com.tranboot.client.sqlast.SQLASTVisitorAspectAdapter;
@@ -169,7 +163,7 @@ public class SqlParserProcessor {
 
             for(int i = 0; columnIterator.hasNext(); ++i) {
                 SQLIdentifierExpr _column = (SQLIdentifierExpr)columnIterator.next();
-                ValuesClause values;
+                SQLInsertStatement.ValuesClause values;
                 if (SqlParserProcessor.this.sqlParser.getMapper().needExclude(_column.getName())) {
                     columnIterator.remove();
                     values = insertStatement.getValues();

@@ -1,8 +1,8 @@
 package com.tranboot.client.model.dbsync;
 
-import com.tranboot.client.druid.sql.ast.SQLStatement;
-import com.tranboot.client.druid.sql.ast.expr.SQLVariantRefExpr;
-import com.tranboot.client.druid.sql.ast.statement.SQLExprTableSource;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
+import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
 import com.tranboot.client.sqlast.MySQLRewriteVistorAop;
 import com.tranboot.client.sqlast.OracleRewriteVistorAop;
 import com.tranboot.client.sqlast.SQLASTVisitorAspectAdapter;

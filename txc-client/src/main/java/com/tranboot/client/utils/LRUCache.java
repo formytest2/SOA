@@ -25,10 +25,10 @@ public class LRUCache {
         public void onRemoval(RemovalNotification<String, TxcSQL> notification) {
             LRUCache.logger.info((String)notification.getKey() + " txc 缓存过期，将被移除");
         }
-    }).recordStats().build();
-    private static final Cache<String, TableSchema> tableSchemaCache;
-    private static final Cache<String, SqlTransformResult> dbsyncSqlTransformCache;
-    private static final Cache<String, TxcSQLTransform> txcSQLTransformCache;
+    }).recordStats().build();                                                               // sql -> TxcSQL
+    private static final Cache<String, TableSchema> tableSchemaCache;                       // tableName -> TableSchema
+    private static final Cache<String, SqlTransformResult> dbsyncSqlTransformCache;         // sql -> SqlTransformResult
+    private static final Cache<String, TxcSQLTransform> txcSQLTransformCache;               // sql -> TxcSQLTransform
 
     public LRUCache() {
     }
@@ -40,52 +40,52 @@ public class LRUCache {
     public static final TxcSQL getTxcSql(String sql, Callable<TxcSQL> loader) {
         Context context = MetricsReporter.txcSqlCacheTimer.time();
 
-        TxcSQL var4;
+        TxcSQL ts;
         try {
             TxcSQL txcSql = (TxcSQL)txcSqlCache.get(sql, loader);
             monitor.info(System.lineSeparator() + "原语句:" + sql + System.lineSeparator() + txcSql.toString());
-            var4 = txcSql;
-        } catch (Exception var8) {
-            throw new TxcTransactionException(var8, "获取TxcSQL失败");
+            ts = txcSql;
+        } catch (Exception e) {
+            throw new TxcTransactionException(e, "获取TxcSQL失败");
         } finally {
             context.stop();
         }
 
-        return var4;
+        return ts;
     }
 
     public static final SqlTransformResult getDbsyncSqlTransformResult(String sql) {
         Context context = MetricsReporter.dbsyncCacheTimer.time();
 
-        SqlTransformResult var2;
+        SqlTransformResult sqlTransformResult;
         try {
-            var2 = (SqlTransformResult)dbsyncSqlTransformCache.getIfPresent(sql);
+            sqlTransformResult = (SqlTransformResult)dbsyncSqlTransformCache.getIfPresent(sql);
         } finally {
             context.stop();
         }
 
-        return var2;
+        return sqlTransformResult;
     }
 
     public static final TxcSQLTransform getTxcTransformedSql(final String sql) {
         Context context = MetricsReporter.txcSQLTransformTimer.time();
 
-        TxcSQLTransform var2;
+        TxcSQLTransform txcSQLTransform;
         try {
-            var2 = (TxcSQLTransform)txcSQLTransformCache.get(sql, new Callable<TxcSQLTransform>() {
+            txcSQLTransform = (TxcSQLTransform)txcSQLTransformCache.get(sql, new Callable<TxcSQLTransform>() {
                 public TxcSQLTransform call() throws Exception {
                     TxcSQLTransformer transformer = new TxcSQLTransformer();
                     TxcSQLTransform transform = transformer.transform(sql);
                     return transform;
                 }
             });
-        } catch (Exception var6) {
-            throw new TxcTransactionException(var6, "获取TxcTransformedSql失败");
+        } catch (Exception e) {
+            throw new TxcTransactionException(e, "获取TxcTransformedSql失败");
         } finally {
             context.stop();
         }
 
-        return var2;
+        return txcSQLTransform;
     }
 
     public static final boolean tableSchemaCacheContain(String tableName) {
@@ -95,26 +95,26 @@ public class LRUCache {
     public static final TableSchema getTableSchema(String tableName, TableSchemaCacheLoader loader) {
         Context context = MetricsReporter.schemaCacheTimer.time();
 
-        TableSchema var4;
+        TableSchema tableSchema;
         try {
             TableSchema schema = (TableSchema)tableSchemaCache.get(tableName, loader);
             logger.info("TableSchema:{}", schema);
             monitor.info(schema.toString());
-            var4 = schema;
-        } catch (Exception var8) {
-            throw new TxcTransactionException(var8, "获取TableSchema失败");
+            tableSchema = schema;
+        } catch (Exception e) {
+            throw new TxcTransactionException(e, "获取TableSchema失败");
         } finally {
             context.stop();
         }
 
-        return var4;
+        return tableSchema;
     }
 
     static {
         MetricsReporter.register(MetricRegistry.name(LRUCache.class, new String[]{"txcSqlCache"}), new LRUCache.CacheStatusMetric(txcSqlCache));
         tableSchemaCache = CacheBuilder.newBuilder().concurrencyLevel(10).initialCapacity(50).maximumSize(100L).recordStats().removalListener(new RemovalListener<String, TableSchema>() {
             public void onRemoval(RemovalNotification<String, TableSchema> notification) {
-                LRUCache.logger.info((String)notification.getKey() + " shcema 缓存过期,将被移除");
+                LRUCache.logger.info((String)notification.getKey() + " schema 缓存过期,将被移除");
             }
         }).build();
         MetricsReporter.register(MetricRegistry.name(LRUCache.class, new String[]{"tableSchemaCache"}), new LRUCache.CacheStatusMetric(tableSchemaCache));

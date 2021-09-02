@@ -14,8 +14,8 @@ public class SystemExit {
 
         try {
             Thread.sleep(timeout);
-        } catch (InterruptedException var4) {
-            var4.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         System.out.println("--------------------------------->" + msg + "结束睡眠<---------------------------------------");

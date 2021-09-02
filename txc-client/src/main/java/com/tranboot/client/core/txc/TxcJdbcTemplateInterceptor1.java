@@ -22,6 +22,11 @@ import javax.sql.DataSource;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * JdbcTemplate拦截器1
+ *      execution(public * update(String))
+ *      即拦截JdbcTemplate的方法 public int update(final String sql)
+ */
 public class TxcJdbcTemplateInterceptor1 extends AbstractJdbcTemplateInterceptor {
     public TxcJdbcTemplateInterceptor1(String datasource, DataSource ds, TxcRedisService txcRedisService, DBType dbType) {
         super(datasource, ds, txcRedisService, dbType);

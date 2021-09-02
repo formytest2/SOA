@@ -1,11 +1,11 @@
 package com.tranboot.client.service.dbsync;
 
-import com.tranboot.client.druid.sql.SQLUtils;
-import com.tranboot.client.druid.sql.ast.SQLStatement;
-import com.tranboot.client.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.tranboot.client.druid.sql.ast.statement.SQLExprTableSource;
-import com.tranboot.client.druid.sql.dialect.mysql.visitor.MySqlASTVisitorAdapter;
-import com.tranboot.client.druid.sql.dialect.oracle.visitor.OracleASTVisitorAdapter;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
+import com.alibaba.druid.sql.ast.statement.SQLExprTableSource;
+import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlASTVisitorAdapter;
+import com.alibaba.druid.sql.dialect.oracle.visitor.OracleASTVisitorAdapter;
 import com.tranboot.client.model.dbsync.SqlMapper;
 import com.tranboot.client.model.dbsync.SqlParser;
 import com.tranboot.client.model.dbsync.SqlParserProcessor;

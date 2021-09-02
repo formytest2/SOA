@@ -1,9 +1,8 @@
 package com.tranboot.client.model.txc;
 
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
 import com.codahale.metrics.Timer.Context;
-import com.tranboot.client.druid.sql.SQLUtils;
-import com.tranboot.client.druid.sql.SQLUtils.FormatOption;
-import com.tranboot.client.druid.sql.ast.SQLStatement;
 import com.tranboot.client.exception.TxcQueryException;
 import com.tranboot.client.exception.TxcSqlParseException;
 import com.tranboot.client.model.SQLType;
@@ -134,7 +133,7 @@ public class SqlParserTxcSQL implements TxcSQL {
                 }
             }
 
-            ArrayList var13 = rollbackSqls;
+            List var13 = rollbackSqls;
             return var13;
         } catch (Exception var11) {
             throw new TxcSqlParseException(var11, String.format("%s 生成回滚语句失败", this.rollbackSql.toString()));
@@ -146,8 +145,8 @@ public class SqlParserTxcSQL implements TxcSQL {
     public String toString() {
         StringBuilder sbuilder = new StringBuilder();
         sbuilder.append("生成方式:").append("自动").append(System.lineSeparator());
-        sbuilder.append("查询语句:").append(this.querySql == null ? "无需前置查询" : SQLUtils.toMySqlString(this.querySql, new FormatOption(false, false, false))).append(System.lineSeparator());
-        sbuilder.append("回滚语句:").append(SQLUtils.toMySqlString(this.rollbackSql, new FormatOption(false, false, false))).append(System.lineSeparator());
+        sbuilder.append("查询语句:").append(this.querySql == null ? "无需前置查询" : SQLUtils.toMySqlString(this.querySql, new SQLUtils.FormatOption(false, false, false))).append(System.lineSeparator());
+        sbuilder.append("回滚语句:").append(SQLUtils.toMySqlString(this.rollbackSql, new SQLUtils.FormatOption(false, false, false))).append(System.lineSeparator());
         sbuilder.append("主键抽取器:").append(this.primaryKeyExtractor.toString()).append(System.lineSeparator());
         sbuilder.append("处理拓扑:").append(System.lineSeparator()).append(this.pipeline.toString()).append(System.lineSeparator());
         return sbuilder.toString();

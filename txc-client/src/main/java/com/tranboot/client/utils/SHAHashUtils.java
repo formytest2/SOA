@@ -3,7 +3,6 @@ package com.tranboot.client.utils;
 import com.google.common.base.Charsets;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
-import java.io.UnsupportedEncodingException;
 
 public class SHAHashUtils {
     public SHAHashUtils() {
@@ -15,11 +14,11 @@ public class SHAHashUtils {
 
     public static long longHash(Object... objects) {
         Hasher haser = createHasher();
-        Object[] var2 = objects;
-        int var3 = objects.length;
+        Object[] objArr = objects;
+        int objArrLen = objects.length;
 
-        for(int var4 = 0; var4 < var3; ++var4) {
-            Object o = var2[var4];
+        for(int i = 0; i < objArrLen; ++i) {
+            Object o = objArr[i];
             if (o instanceof Integer) {
                 haser.putInt((Integer)o);
             } else if (o instanceof String) {
@@ -42,11 +41,11 @@ public class SHAHashUtils {
 
     public static long unsignedLongHash(Object... objects) {
         Hasher haser = createHasher();
-        Object[] var2 = objects;
-        int var3 = objects.length;
+        Object[] objArr = objects;
+        int objArrLen = objects.length;
 
-        for(int var4 = 0; var4 < var3; ++var4) {
-            Object o = var2[var4];
+        for(int i = 0; i < objArrLen; ++i) {
+            Object o = objArr[i];
             if (o instanceof Integer) {
                 haser.putInt((Integer)o);
             } else if (o instanceof String) {
@@ -67,7 +66,4 @@ public class SHAHashUtils {
         return Integer.toUnsignedLong(haser.hash().asInt());
     }
 
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        System.out.println(unsignedLongHash(7, "editCartItem"));
-    }
 }

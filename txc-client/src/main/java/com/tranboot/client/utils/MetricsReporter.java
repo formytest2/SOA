@@ -57,6 +57,7 @@ public class MetricsReporter {
 
     static {
         reporter = JmxReporter.forRegistry(metrics).build();
+
         txcTimeoutCounter = (Counter)register("txcTimeoutCounter", new Counter());
         throughput = (Meter)register("qps", new Meter());
         redLockFailCount = (Counter)register("redLockFailCount", new Counter());
@@ -82,6 +83,7 @@ public class MetricsReporter {
         insertTxcLog = timer(MetricRegistry.name(TxcMethodInterceptor.class, new String[]{"insertTransactionLog"}));
         queryManualRollbackSql = timer(MetricRegistry.name(TxcManualRollbackSQLServiceMysqlImpl.class, new String[]{"queryManualRollbackSql"}));
         invokeTimer = timer(MetricRegistry.name(TxcDubboFilter.class, new String[]{"invoke"}));
+
         reporter.start();
     }
 }

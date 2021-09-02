@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 
-// todo 仅实现了InitializingBean 没有使用@Component注解的类会被作为spring bean加载到容器吗？
 public class TxcMqService implements InitializingBean {
     protected Logger logger = LoggerFactory.getLogger(TxcMqService.class);
     private DefaultMQProducer producer;

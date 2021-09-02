@@ -1,7 +1,7 @@
 package com.tranboot.client.model.txc;
 
-import com.tranboot.client.druid.sql.SQLUtils;
-import com.tranboot.client.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
 import com.tranboot.client.model.DBType;
 import com.tranboot.client.service.txc.TxcManualRollbackSqlService;
 import com.tranboot.client.spring.ContextUtils;
@@ -27,7 +27,7 @@ public class TxcSqlProcessorWraper implements TxcSqlProcessor {
             logger.debug("{} 通过手动配置生成回滚语句。", this.sql);
             this.processor = new TxcSqlManualProcessor(this.sql);
         } else {
-            this.processor = new TxcSqlParserProcessor(this.jdbc, (SQLStatement)SQLUtils.parseStatements(this.cleanSql(this.sql), this.dbType == DBType.ORACLE ? "oracle" : "mysql").get(0), this.datasource);
+            this.processor = new TxcSqlParserProcessor(this.jdbc, (SQLStatement) SQLUtils.parseStatements(this.cleanSql(this.sql), this.dbType == DBType.ORACLE ? "oracle" : "mysql").get(0), this.datasource);
         }
 
         return this.processor.parse();

@@ -1,6 +1,7 @@
 package com.tranboot.client.sqlast;
 
-import com.tranboot.client.druid.sql.builder.impl.SQLSelectBuilderImpl;
+import com.alibaba.druid.sql.builder.impl.SQLSelectBuilderImpl;
+
 import java.util.HashSet;
 import java.util.Set;
 

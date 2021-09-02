@@ -12,9 +12,9 @@ import com.tranboot.client.spring.ContextUtils;
  */
 public final class TxcContext {
 
-    protected static final String TXC_XID = "TXC_XID";
-    protected static final String TXC_START = "TXC_START";
-    protected static final String TXC_TIMEOUT = "TXC_TIMEOUT";
+    protected static final String TXC_XID = "TXC_XID";              // 分布式事务id
+    protected static final String TXC_START = "TXC_START";          // 事务起始时间 (时间戳 ms)
+    protected static final String TXC_TIMEOUT = "TXC_TIMEOUT";      // 事务超时时间 s
 
     /**
      * 绑定

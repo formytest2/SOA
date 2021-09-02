@@ -4,6 +4,7 @@ import com.codahale.metrics.Timer.Context;
 import com.tranboot.client.exception.TxcTransactionStatusError;
 import com.tranboot.client.model.txc.BranchRollbackInfo;
 import com.tranboot.client.model.txc.BranchRollbackMessage;
+import com.tranboot.client.service.txc.TxcRedisService;
 import com.tranboot.client.spring.ContextUtils;
 import com.tranboot.client.utils.MetricsReporter;
 import java.util.ArrayList;
@@ -18,6 +19,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+/**
+ * txc回滚事务管理器
+ */
 public final class TxcRollbackSqlManagerV2 {
     private static final Logger logger = LoggerFactory.getLogger(TxcRollbackSqlManagerV2.class);
     private static final Logger log = LoggerFactory.getLogger("txcRollbackSqlManager");
@@ -28,11 +32,13 @@ public final class TxcRollbackSqlManagerV2 {
     public TxcRollbackSqlManagerV2() {
     }
 
+    // 获取txc值: xid-branchId
     protected static final String txc(BranchRollbackMessage message) {
         String txc = String.format("%s-%s", String.valueOf(message.getXid()), String.valueOf(message.getBranchId()));
         return txc;
     }
 
+    // 开启事务
     protected static BranchRollbackMessage beginTransaction(DataSource ds, long branchId, long xid, String serverIp) {
         if (_txcResource.get() == null) {
             _txcResource.set(new HashMap());
@@ -51,7 +57,7 @@ public final class TxcRollbackSqlManagerV2 {
         message.setBranchId(branchId);
         message.setXid(xid);
         message.setServerIp(serverIp);
-        message.setStatus(0);
+        message.setStatus(TxcRedisService.INIT_STATUS);
         message.setTransactionStartDate(new Date(TxcContext.getTxcStart()));
         message.setTransactionOutTimeSecond((long)TxcContext.getTxcTimeout() * 1000L);
         ((Map)_txcResource.get()).put(ds, message);
@@ -59,6 +65,7 @@ public final class TxcRollbackSqlManagerV2 {
         return message;
     }
 
+    // 判断是否存在分布式事务
     protected static boolean inTransaction(DataSource ds) {
         if (_txcResource.get() == null) {
             return false;
@@ -67,6 +74,7 @@ public final class TxcRollbackSqlManagerV2 {
         }
     }
 
+    // 获取分布式事务信息
     protected static BranchRollbackMessage get(DataSource ds) {
         if (_txcResource.get() != null && ((Map)_txcResource.get()).containsKey(ds)) {
             return (BranchRollbackMessage)((Map)_txcResource.get()).get(ds);
@@ -81,7 +89,7 @@ public final class TxcRollbackSqlManagerV2 {
         Context context = MetricsReporter.redLockTimer.time();
 
         label62: {
-            ReentrantRedLock var5;
+            ReentrantRedLock lock;
             try {
                 if (!reentrantRedLock.tryLock((long)(txcTimeout * 1000), TimeUnit.MILLISECONDS)) {
                     break label62;
@@ -98,12 +106,12 @@ public final class TxcRollbackSqlManagerV2 {
                     ((List)((Map)_redLocks.get()).get(ds)).add(reentrantRedLock);
                 }
 
-                var5 = reentrantRedLock;
+                lock = reentrantRedLock;
             } finally {
                 context.stop();
             }
 
-            return var5;
+            return lock;
         }
 
         MetricsReporter.redLockFailCount.inc();
@@ -127,6 +135,7 @@ public final class TxcRollbackSqlManagerV2 {
         throw new TxcTransactionStatusError(String.format("分布式事务锁【%s】获取超时!", key));
     }
 
+    // 释放分布式事务上下文
     protected static void releaseResource(DataSource ds) {
         log.debug("开始释放分布式事务上下文...");
         if (_txcResource.get() != null) {

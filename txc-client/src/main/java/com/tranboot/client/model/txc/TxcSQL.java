@@ -27,10 +27,10 @@ public interface TxcSQL {
 
         public String pkv() {
             StringBuilder sbuilder = new StringBuilder();
-            Iterator var2 = this.primaryKVPair.iterator();
+            Iterator iterator = this.primaryKVPair.iterator();
 
-            while(var2.hasNext()) {
-                KeyValuePair kv = (KeyValuePair)var2.next();
+            while(iterator.hasNext()) {
+                KeyValuePair kv = (KeyValuePair)iterator.next();
                 sbuilder.append(kv.column).append("[").append(kv.value.toString()).append("]").append("-");
             }
 

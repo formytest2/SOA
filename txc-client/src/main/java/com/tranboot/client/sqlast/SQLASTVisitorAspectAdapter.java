@@ -1,14 +1,10 @@
 package com.tranboot.client.sqlast;
 
-import com.tranboot.client.druid.sql.ast.expr.SQLBinaryOpExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLInListExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLLiteralExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLVariantRefExpr;
-import com.tranboot.client.druid.sql.ast.statement.SQLDeleteStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLExprTableSource;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateSetItem;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateStatement;
+import com.alibaba.druid.sql.ast.expr.SQLBinaryOpExpr;
+import com.alibaba.druid.sql.ast.expr.SQLInListExpr;
+import com.alibaba.druid.sql.ast.expr.SQLLiteralExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
+import com.alibaba.druid.sql.ast.statement.*;
 
 public class SQLASTVisitorAspectAdapter implements SQLASTVisitorAspect {
     public SQLASTVisitorAspectAdapter() {

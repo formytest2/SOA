@@ -1,8 +1,8 @@
 package com.tranboot.client.model.txc;
 
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
 import com.codahale.metrics.Timer.Context;
-import com.tranboot.client.druid.sql.SQLUtils;
-import com.tranboot.client.druid.sql.ast.SQLStatement;
 import com.tranboot.client.exception.TxcSqlParseException;
 import com.tranboot.client.model.SQLType;
 import com.tranboot.client.model.txc.SQLParamExtractorPipeline.KeyValuePair;
@@ -31,7 +31,7 @@ public class ManualRollbackTxcSQL implements TxcSQL {
         this.originalSql = originalSql;
         this.rollbackSql = rollbackSql;
         this.indexs = indexs;
-        this.rollbackStatement = (SQLStatement)SQLUtils.parseStatements(rollbackSql, "mysql").get(0);
+        this.rollbackStatement = (SQLStatement) SQLUtils.parseStatements(rollbackSql, "mysql").get(0);
         this.sqlType = sqlType;
         this.table = table;
         this.primaryKey = primaryKey;

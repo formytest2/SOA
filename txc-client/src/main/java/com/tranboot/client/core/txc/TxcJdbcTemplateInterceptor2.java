@@ -22,6 +22,9 @@ import javax.sql.DataSource;
 import org.aopalliance.intercept.MethodInvocation;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * public int update(String sql, @Nullable Object... args)
+ */
 public class TxcJdbcTemplateInterceptor2 extends AbstractJdbcTemplateInterceptor {
     public TxcJdbcTemplateInterceptor2(String datasource, DataSource ds, TxcRedisService txcRedisService, DBType dbType) {
         super(datasource, ds, txcRedisService, dbType);

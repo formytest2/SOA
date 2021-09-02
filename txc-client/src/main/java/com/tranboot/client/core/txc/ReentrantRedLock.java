@@ -10,6 +10,9 @@ import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+/**
+ * 可重入redis分布式锁
+ */
 public final class ReentrantRedLock {
     private static final ThreadLocal<List<ReentrantRedLock>> holdedLock = new ThreadLocal();
     private ReentrantRedLock.RedisLock innerLock;
@@ -74,7 +77,7 @@ public final class ReentrantRedLock {
             this.locked = false;
             this.expireSecond = 60;
             this.stringRedisTemplate = stringRedisTemplate;
-            this.lockKey = "txc_redlock_" + lockKey;
+            this.lockKey = PREFIX_KEY + lockKey;
             this.expireSecond = expireSecond;
         }
 
@@ -116,10 +119,10 @@ public final class ReentrantRedLock {
 
             while(!this.lock()) {
                 try {
-                    Thread.sleep((long)(2 * randInt(0, 6)));
+                    Thread.sleep((long)(DEFAULT_RETRY_INTERVAL_MILLIS_SED * randInt(0, 6)));
                     nanosTimeout = deadline - System.nanoTime();
-                } catch (InterruptedException var9) {
-                    var9.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
 
                 if (nanosTimeout <= 0L) {

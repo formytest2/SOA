@@ -26,6 +26,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 抽象JdbcTemplate拦截器
+ */
 public abstract class AbstractJdbcTemplateInterceptor implements MethodInterceptor {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected final Timer txcTimer = MetricsReporter.timer(MetricRegistry.name(this.getClass(), new String[]{"txc"}));
@@ -46,7 +49,7 @@ public abstract class AbstractJdbcTemplateInterceptor implements MethodIntercept
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Context invokeContext = this.invokeTimer.time();
 
-        Object var5;
+        Object result;
         try {
             Object ret;
             if (!TxcContext.inTxcTransaction()) {
@@ -61,17 +64,17 @@ public abstract class AbstractJdbcTemplateInterceptor implements MethodIntercept
                 long branchId = BranchIdGenerator.branchId();
                 message.setDataSource(this.datasource);
                 message.setBranchId(branchId);
-                message.setStatus(0);
+                message.setStatus(TxcRedisService.INIT_STATUS);
                 message.setServerIp(ContextUtils.getServerIp());
                 message.setTransactionStartDate(new Date(TxcContext.getTxcStart()));
                 message.setTransactionOutTimeSecond((long)TxcContext.getTxcTimeout() * 1000L);
                 Context context = this.txcTimer.time();
                 ArrayList locks = new ArrayList();
-                boolean var34 = false;
+                boolean locked = false;
 
-                Object var11;
+                Object res;
                 try {
-                    var34 = true;
+                    locked = true;
                     this.logger.debug(this.datasource + "不存在本地事务");
                     long redisTime = this.txcRedisService.getCurrentTimeMillisFromRedis();
                     if (TxcContext.getTxcStart() + (long)(TxcContext.getTxcTimeout() * 1000) < redisTime) {
@@ -80,20 +83,20 @@ public abstract class AbstractJdbcTemplateInterceptor implements MethodIntercept
 
                     ret = this.txc(invocation, message, 0, locks);
                     MetricsReporter.throughput.mark();
-                    message.setStatus(1);
+                    message.setStatus(TxcRedisService.COMMITTABLE_STATUS);
                     this.txcRedisService.hput(TxcRedisService.buildTransactionModel(message));
-                    var11 = ret;
-                    var34 = false;
-                } catch (TxcDBException var37) {
-                    message.setStatus(2);
+                    res = ret;
+                    locked = false;
+                } catch (TxcDBException e) {
+                    message.setStatus(TxcRedisService.ROLLBACKABLE_STATUS);
                     this.txcRedisService.hput(TxcRedisService.buildTransactionModel(message));
-                    throw var37;
+                    throw e;
                 } finally {
-                    if (var34) {
-                        Iterator var15 = locks.iterator();
+                    if (locked) {
+                        Iterator locksIterator = locks.iterator();
 
-                        while(var15.hasNext()) {
-                            ReentrantRedLock lock = (ReentrantRedLock)var15.next();
+                        while(locksIterator.hasNext()) {
+                            ReentrantRedLock lock = (ReentrantRedLock)locksIterator.next();
                             lock.unlock();
                         }
 
@@ -101,15 +104,15 @@ public abstract class AbstractJdbcTemplateInterceptor implements MethodIntercept
                     }
                 }
 
-                Iterator var12 = locks.iterator();
+                Iterator locksIterator = locks.iterator();
 
-                while(var12.hasNext()) {
-                    ReentrantRedLock lock = (ReentrantRedLock)var12.next();
+                while(locksIterator.hasNext()) {
+                    ReentrantRedLock lock = (ReentrantRedLock)locksIterator.next();
                     lock.unlock();
                 }
 
                 context.stop();
-                return var11;
+                return res;
             }
 
             Context context = this.txcTimer.time();
@@ -118,10 +121,9 @@ public abstract class AbstractJdbcTemplateInterceptor implements MethodIntercept
                 this.logger.debug(this.datasource + "存在本地事务");
                 ret = this.txc(invocation, TxcRollbackSqlManagerV2.get(this.ds), 1, (List)null);
                 MetricsReporter.throughput.mark();
-                var5 = ret;
-            } catch (Throwable var35) {
-                Throwable e = var35;
-                throw var35;
+                result = ret;
+            } catch (Throwable throwable) {
+                throw throwable;
             } finally {
                 context.stop();
             }
@@ -129,10 +131,10 @@ public abstract class AbstractJdbcTemplateInterceptor implements MethodIntercept
             invokeContext.stop();
         }
 
-        return var5;
+        return result;
     }
 
-    public abstract Object txc(MethodInvocation var1, BranchRollbackMessage var2, int var3, List<ReentrantRedLock> var4) throws TxcDBException;
+    public abstract Object txc(MethodInvocation invocation, BranchRollbackMessage message, int transactionType, List<ReentrantRedLock> locks) throws TxcDBException;
 
     protected static Object[] addArgs(Object[] args, Object... additionArgs) {
         return ArrayUtils.addAll(args, additionArgs);

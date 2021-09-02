@@ -14,7 +14,7 @@ public class BranchRollbackMessage implements Serializable {
     private String dataSource;
     private int status;
     private Date transactionStartDate;
-    private Long transactionOutTimeSecond;
+    private Long transactionOutTimeSecond;      // 事务结束时间戳 ms
 
     public BranchRollbackMessage() {
     }

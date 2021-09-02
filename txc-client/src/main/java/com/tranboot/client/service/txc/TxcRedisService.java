@@ -67,8 +67,8 @@ public class TxcRedisService {
             this.txcRedisTemplate.opsForHash().put(redisKey, String.valueOf(model.getTransactionSqlId()), model);
             this.txcRedisTemplate.expire(redisKey, 24L, TimeUnit.HOURS);
             this.logger.debug("redis hput finished", model.toString());
-        } catch (Exception var7) {
-            throw new TxcRedisException(var7, "txc reids存入失败");
+        } catch (Exception e) {
+            throw new TxcRedisException(e, "txc reids存入失败");
         } finally {
             context.stop();
         }
@@ -76,10 +76,10 @@ public class TxcRedisService {
     }
 
     public void hput(List<RedisTransactionModel> models) throws TxcRedisException {
-        Iterator var2 = models.iterator();
+        Iterator iterator = models.iterator();
 
-        while(var2.hasNext()) {
-            RedisTransactionModel model = (RedisTransactionModel)var2.next();
+        while(iterator.hasNext()) {
+            RedisTransactionModel model = (RedisTransactionModel)iterator.next();
             this.hput(model);
         }
 
@@ -94,10 +94,10 @@ public class TxcRedisService {
         model.setStatus(message.getStatus());
         List<SqlParamModel> sqls = new ArrayList();
         if (message.getInfo() != null) {
-            Iterator var3 = message.getInfo().iterator();
+            Iterator iterator = message.getInfo().iterator();
 
-            while(var3.hasNext()) {
-                BranchRollbackInfo info = (BranchRollbackInfo)var3.next();
+            while(iterator.hasNext()) {
+                BranchRollbackInfo info = (BranchRollbackInfo)iterator.next();
                 sqls.addAll(info.getRollbackSql());
             }
         }

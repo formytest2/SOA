@@ -1,14 +1,14 @@
 package com.tranboot.client.sqlast;
 
-import com.tranboot.client.druid.sql.SQLUtils;
-import com.tranboot.client.druid.sql.ast.SQLStatement;
-import com.tranboot.client.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLVariantRefExpr;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement.ValuesClause;
-import com.tranboot.client.druid.sql.builder.impl.SQLBuilderImpl;
-import com.tranboot.client.druid.sql.dialect.mysql.ast.statement.MySqlInsertStatement;
-import com.tranboot.client.druid.sql.dialect.oracle.ast.stmt.OracleInsertStatement;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
+import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
+import com.alibaba.druid.sql.builder.impl.SQLBuilderImpl;
+import com.alibaba.druid.sql.dialect.mysql.ast.statement.MySqlInsertStatement;
+import com.alibaba.druid.sql.dialect.oracle.ast.stmt.OracleInsertStatement;
+
 import java.util.List;
 
 public class SqlInsertStatementBuilderImpl extends SQLBuilderImpl implements SqlInsertStatementBuilder {
@@ -82,7 +82,7 @@ public class SqlInsertStatementBuilderImpl extends SQLBuilderImpl implements Sql
 
     private SqlInsertStatementBuilder value(String... columns) {
         SQLInsertStatement statement = this.getSQLInsertStatement();
-        ValuesClause valuesClause = new ValuesClause();
+        SQLInsertStatement.ValuesClause valuesClause = new SQLInsertStatement.ValuesClause();
         valuesClause.setParent(statement);
 
         for(int i = 0; i < columns.length; ++i) {

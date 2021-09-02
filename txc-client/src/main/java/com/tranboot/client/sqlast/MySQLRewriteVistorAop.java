@@ -1,20 +1,10 @@
 package com.tranboot.client.sqlast;
 
-import com.tranboot.client.druid.sql.ast.SQLExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLBinaryOpExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLBinaryOperator;
-import com.tranboot.client.druid.sql.ast.expr.SQLCharExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLInListExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLLiteralExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLPropertyExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLVariantRefExpr;
-import com.tranboot.client.druid.sql.ast.statement.SQLDeleteStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLExprTableSource;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateSetItem;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateStatement;
-import com.tranboot.client.druid.sql.dialect.mysql.visitor.MySqlExportParameterVisitor;
+import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.expr.*;
+import com.alibaba.druid.sql.ast.statement.*;
+import com.alibaba.druid.sql.dialect.mysql.visitor.MySqlExportParameterVisitor;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

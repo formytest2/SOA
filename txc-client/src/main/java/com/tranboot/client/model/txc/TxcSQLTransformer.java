@@ -1,16 +1,15 @@
 package com.tranboot.client.model.txc;
 
-import com.tranboot.client.druid.sql.SQLUtils;
-import com.tranboot.client.druid.sql.ast.SQLExpr;
-import com.tranboot.client.druid.sql.ast.SQLStatement;
-import com.tranboot.client.druid.sql.ast.expr.SQLIdentifierExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLPropertyExpr;
-import com.tranboot.client.druid.sql.ast.expr.SQLVariantRefExpr;
-import com.tranboot.client.druid.sql.ast.statement.SQLDeleteStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateSetItem;
-import com.tranboot.client.druid.sql.ast.statement.SQLUpdateStatement;
-import com.tranboot.client.druid.sql.ast.statement.SQLInsertStatement.ValuesClause;
+import com.alibaba.druid.sql.SQLUtils;
+import com.alibaba.druid.sql.ast.SQLExpr;
+import com.alibaba.druid.sql.ast.SQLStatement;
+import com.alibaba.druid.sql.ast.expr.SQLIdentifierExpr;
+import com.alibaba.druid.sql.ast.expr.SQLPropertyExpr;
+import com.alibaba.druid.sql.ast.expr.SQLVariantRefExpr;
+import com.alibaba.druid.sql.ast.statement.SQLDeleteStatement;
+import com.alibaba.druid.sql.ast.statement.SQLInsertStatement;
+import com.alibaba.druid.sql.ast.statement.SQLUpdateSetItem;
+import com.alibaba.druid.sql.ast.statement.SQLUpdateStatement;
 import com.tranboot.client.model.SQLType;
 import com.tranboot.client.sqlast.MySQLRewriteVistorAop;
 import com.tranboot.client.sqlast.SQLASTVisitorAspectAdapter;
@@ -19,6 +18,9 @@ import java.util.Collections;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * TxcSQL转换器
+ */
 public class TxcSQLTransformer {
     public static final String TXC_FILED = "txc";
     private TxcSQLTransformer.TxcSQLTransform result = new TxcSQLTransformer.TxcSQLTransform();
@@ -28,7 +30,7 @@ public class TxcSQLTransformer {
 
     public TxcSQLTransformer.TxcSQLTransform transform(String originalSql) throws Exception {
         try {
-            SQLStatement statement = (SQLStatement)SQLUtils.parseStatements(this.cleanSql(originalSql), "mysql").get(0);
+            SQLStatement statement = (SQLStatement) SQLUtils.parseStatements(this.cleanSql(originalSql), "mysql").get(0);
             StringBuilder sbuilder = new StringBuilder();
             TxcSQLTransformer.SQLTransformHandler handler = new TxcSQLTransformer.SQLTransformHandler();
             statement.accept(new MySQLRewriteVistorAop((List)null, sbuilder, handler));
@@ -44,6 +46,7 @@ public class TxcSQLTransformer {
         }
     }
 
+    // 清理掉sql中的mycat注解
     protected String cleanSql(String sql) {
         return sql.indexOf("mycat") > -1 ? StringUtils.substringAfterLast(sql, "*/") : sql;
     }
@@ -122,7 +125,7 @@ public class TxcSQLTransformer {
                 TxcSQLTransformer.this.result.additionIndex = ((SQLVariantRefExpr)insertStatement.getValues().getValues().get(insertStatement.getValues().getValues().size() - 1)).getIndex();
             } else {
                 List<SQLExpr> columns = insertStatement.getColumns();
-                ValuesClause values = insertStatement.getValues();
+                SQLInsertStatement.ValuesClause values = insertStatement.getValues();
                 List<SQLExpr> _values = values.getValues();
                 SQLIdentifierExpr txcField = new SQLIdentifierExpr("txc");
                 columns.add(txcField);
