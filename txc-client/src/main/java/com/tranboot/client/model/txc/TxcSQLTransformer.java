@@ -28,9 +28,10 @@ public class TxcSQLTransformer {
     public TxcSQLTransformer() {
     }
 
+    // sql转换 insert和update语句加了txc字段
     public TxcSQLTransformer.TxcSQLTransform transform(String originalSql) throws Exception {
         try {
-            SQLStatement statement = (SQLStatement) SQLUtils.parseStatements(this.cleanSql(originalSql), "mysql").get(0);
+            SQLStatement statement = (SQLStatement) SQLUtils.parseStatements(this.cleanSql(originalSql), "mysql").get(0);   // 获取sql语句
             StringBuilder sbuilder = new StringBuilder();
             TxcSQLTransformer.SQLTransformHandler handler = new TxcSQLTransformer.SQLTransformHandler();
             statement.accept(new MySQLRewriteVistorAop((List)null, sbuilder, handler));
@@ -41,8 +42,8 @@ public class TxcSQLTransformer {
             statement = (SQLStatement)SQLUtils.parseStatements(sql, "mysql").get(0);
             statement.accept(new MySQLRewriteVistorAop((List)null, sbuilder, handler));
             return this.result;
-        } catch (Exception var6) {
-            throw var6;
+        } catch (Exception e) {
+            throw e;
         }
     }
 
@@ -103,13 +104,13 @@ public class TxcSQLTransformer {
                 SQLUpdateSetItem txcUpd = new SQLUpdateSetItem();
                 txcUpd.setParent(updateStatement);
                 if (alias == null) {
-                    txcUpd.setColumn(new SQLIdentifierExpr("txc"));
+                    txcUpd.setColumn(new SQLIdentifierExpr(TXC_FILED));
                 } else {
                     SQLPropertyExpr property = new SQLPropertyExpr();
                     SQLIdentifierExpr owner = new SQLIdentifierExpr(alias);
                     owner.setParent(property);
                     property.setOwner(owner);
-                    property.setName("txc");
+                    property.setName(TXC_FILED);
                     txcUpd.setColumn(property);
                 }
 
@@ -127,7 +128,7 @@ public class TxcSQLTransformer {
                 List<SQLExpr> columns = insertStatement.getColumns();
                 SQLInsertStatement.ValuesClause values = insertStatement.getValues();
                 List<SQLExpr> _values = values.getValues();
-                SQLIdentifierExpr txcField = new SQLIdentifierExpr("txc");
+                SQLIdentifierExpr txcField = new SQLIdentifierExpr(TXC_FILED);
                 columns.add(txcField);
                 _values.add(new SQLVariantRefExpr("?"));
             }

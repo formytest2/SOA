@@ -53,6 +53,7 @@ public class TransactionInitServiceImpl implements TransactionInitService {
         return transactionInitResponse;
     }
 
+    // 根据库名和表名查分库字段
     public SharedColumnGetResponse getSharedColumn(SharedColumnGetRequest sharedColumnGetRequest) {
         SharedColumnGetResponse sharedColumnGetResponse = new SharedColumnGetResponse();
 

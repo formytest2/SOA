@@ -4,8 +4,6 @@ import com.tranboot.client.model.txc.TxcRollbackMode;
 import java.lang.annotation.Annotation;
 
 public final class DefaultTxcTransaction implements TxcTransaction {
-    public DefaultTxcTransaction() {
-    }
 
     public Class<? extends Annotation> annotationType() {
         return null;
@@ -18,5 +16,6 @@ public final class DefaultTxcTransaction implements TxcTransaction {
     public int timeout() {
         return 0;
     }
+
 }
 

@@ -6,15 +6,15 @@ import com.codahale.metrics.Timer.Context;
 import com.tranboot.client.exception.TxcSqlParseException;
 import com.tranboot.client.model.SQLType;
 import com.tranboot.client.model.txc.SQLParamExtractorPipeline.KeyValuePair;
-import com.tranboot.client.model.txc.TxcSQL.RollbackSqlInfo;
 import com.tranboot.client.sqlast.MySQLRewriteVistorAop;
 import com.tranboot.client.sqlast.SQLASTVisitorAspectAdapter;
 import com.tranboot.client.utils.MetricsReporter;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class ManualRollbackTxcSQL implements TxcSQL {
     public final String originalSql;
@@ -39,7 +39,7 @@ public class ManualRollbackTxcSQL implements TxcSQL {
         this.shardValueIndex = shardValueIndex;
     }
 
-    public List<RollbackSqlInfo> rollbackSql(Object[] args, JdbcTemplate jdbc) {
+    public List<RollbackSqlInfo> rollbackSql(Object[] args, JdbcTemplate jdbcTemplate) {
         Context context = MetricsReporter.manualRollbackSqlTimer.time();
         Object[] params = null;
         if (this.indexs != null) {
@@ -50,7 +50,7 @@ public class ManualRollbackTxcSQL implements TxcSQL {
             }
         }
 
-        List var9;
+        List rollbackSqlInfoList;
         try {
             StringBuilder sbuilder = new StringBuilder();
             this.rollbackStatement.accept(new MySQLRewriteVistorAop((List)(params == null ? new ArrayList() : Arrays.asList(params)), sbuilder, new SQLASTVisitorAspectAdapter()));
@@ -63,14 +63,14 @@ public class ManualRollbackTxcSQL implements TxcSQL {
             }
 
             RollbackSqlInfo rollbackInfo = new RollbackSqlInfo(rollbackSql, primaryKVPair, this.shardValueIndex == null ? null : args[this.shardValueIndex].toString());
-            var9 = Collections.singletonList(rollbackInfo);
-        } catch (Exception var13) {
-            throw new TxcSqlParseException(var13, String.format("%s 生成回滚语句失败", this.rollbackSql));
+            rollbackSqlInfoList = Collections.singletonList(rollbackInfo);
+        } catch (Exception e) {
+            throw new TxcSqlParseException(e, String.format("%s 生成回滚语句失败", this.rollbackSql));
         } finally {
             context.stop();
         }
 
-        return var9;
+        return rollbackSqlInfoList;
     }
 
     public SQLType getSqlType() {

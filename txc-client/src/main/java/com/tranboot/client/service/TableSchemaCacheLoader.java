@@ -11,12 +11,7 @@ import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -39,11 +34,17 @@ public class TableSchemaCacheLoader implements Callable<TableSchema> {
         this.datasource = datasource;
     }
 
+    public TableSchema call() throws Exception {
+        return this.loadSchema();
+    }
+
+    // 加载table schema 表信息
     private TableSchema loadSchema() {
         final TableSchema schema = new TableSchema();
         schema.setTableName(this.tableName);
         schema.setDbName(this.datasource);
-        List<MysqlIndex> indexs = (List)this.jdbcTemplate.query(String.format("show index from %s", this.tableName), new ResultSetExtractor<List<MysqlIndex>>() {
+        // 查表的所有索引
+        List<MysqlIndex> indexs = (List)this.jdbcTemplate.query(String.format(showindex, this.tableName), new ResultSetExtractor<List<MysqlIndex>>() {
             public List<MysqlIndex> extractData(ResultSet rs) throws SQLException, DataAccessException {
                 ArrayList indexs = new ArrayList();
 
@@ -61,19 +62,19 @@ public class TableSchemaCacheLoader implements Callable<TableSchema> {
                 return indexs;
             }
         });
-        Map<String, List<String>> tmp = new HashMap();
-        Iterator var4 = indexs.iterator();
+        Map<String, List<String>> tmp = new HashMap();  // uniqIndexName -> columnNameList (这个list只有联合唯一索引的情况才有值... 唯一索引的第一列值都没存...)
+        Iterator indexsIterator = indexs.iterator();
 
-        while(var4.hasNext()) {
-            MysqlIndex index = (MysqlIndex)var4.next();
-            if (index.getKeyName().equals("PRIMARY")) {
+        while(indexsIterator.hasNext()) {
+            MysqlIndex index = (MysqlIndex)indexsIterator.next();
+            if (index.getKeyName().equals("PRIMARY")) { // 主键
                 schema.primaryKey(index.getColumnName().toLowerCase());
-            } else if (index.getNonUnique() == 0) {
+            } else if (index.getNonUnique() == 0) { // 唯一索引
                 String keyname = index.getKeyName();
                 if (tmp.containsKey(keyname)) {
                     ((List)tmp.get(keyname)).add(index.getColumnName().toLowerCase());
                 } else {
-                    tmp.put(keyname, new ArrayList());
+                    tmp.put(keyname, new ArrayList());  // 当前的列名没加到list... 其实好像也没用到
                 }
             }
         }
@@ -83,13 +84,13 @@ public class TableSchemaCacheLoader implements Callable<TableSchema> {
             throw new TxcNotSupportException(String.format("表%s没有解析到主键或唯一索引，不能进行分布式事务操作", this.tableName));
         } else {
             new ArrayList();
-            List<Map<String, String>> allfileds = (List)this.jdbcTemplate.query(String.format("select table_schema,column_name from information_schema.columns where table_name='%s'", this.tableName), new ResultSetExtractor<List<Map<String, String>>>() {
+            List<Map<String, String>> allfileds = (List)this.jdbcTemplate.query(String.format(_sql, this.tableName), new ResultSetExtractor<List<Map<String, String>>>() {
                 public List<Map<String, String>> extractData(ResultSet rs) throws SQLException, DataAccessException {
                     ArrayList result = new ArrayList();
 
                     while(rs.next()) {
                         Map<String, String> field = new HashMap();
-                        field.put("table_schema", rs.getString("table_schema").toLowerCase());
+                        field.put("table_schema", rs.getString("table_schema").toLowerCase());  // table_schema是物理库 不是逻辑库，如果做了分库，一个表可能会存在于多个库中
                         field.put("column_name", rs.getString("column_name").toLowerCase());
                         result.add(field);
                     }
@@ -98,11 +99,13 @@ public class TableSchemaCacheLoader implements Callable<TableSchema> {
                 }
             });
             if (allfileds != null && allfileds.size() > 0) {
+                // 按照table_schema进行分组
                 Map<String, List<Map<String, String>>> grouprs = (Map)allfileds.stream().collect(Collectors.groupingBy(new Function<Map<String, String>, String>() {
                     public String apply(Map<String, String> t) {
                         return (String)t.get("table_schema");
                     }
                 }));
+                // 取grouprs中的第一组， 即从第一个库中获取所有的列名(如果分库了，每个库的同一个表的字段是一样的)
                 List<String> fileds = (List)((List)((Entry)grouprs.entrySet().iterator().next()).getValue()).stream().map(new Function<Map<String, String>, String>() {
                     public String apply(Map<String, String> t) {
                         return (String)t.get("column_name");
@@ -110,40 +113,49 @@ public class TableSchemaCacheLoader implements Callable<TableSchema> {
                 }).collect(Collectors.toList());
                 schema.setColumns(fileds);
             } else {
-                this.jdbcTemplate.query(String.format("select * from %s limit 0,1", this.tableName), new ResultSetExtractor<Map<String, Object>>() {
+                // 上面如果通过information_schema.columns没查到表的字段 可能是权限问题， 只能查表数据来获取表字段
+
+                this.jdbcTemplate.query(String.format(sql, this.tableName), new ResultSetExtractor<Map<String, Object>>() {
                     public Map<String, Object> extractData(ResultSet rs) throws SQLException, DataAccessException {
-                        ResultSetMetaData rsm = rs.getMetaData();
+                        ResultSetMetaData rsm = rs.getMetaData();   // ResultSet包含的列的元数据
 
                         try {
                             if (Class.forName("com.alibaba.druid.proxy.jdbc.ResultSetMetaDataProxyImpl").isInstance(rsm)) {
                                 Method getResultSetMetaDataRaw = Class.forName("com.alibaba.druid.proxy.jdbc.ResultSetMetaDataProxyImpl").getMethod("getResultSetMetaDataRaw");
                                 rsm = (ResultSetMetaData)getResultSetMetaDataRaw.invoke(rsm);
                             }
-                        } catch (Exception var7) {
-                            throw new TxcNotSupportException(var7, String.format("获取表%s table_schema 时出现异常", TableSchemaCacheLoader.this.tableName));
+                        } catch (Exception e) {
+                            throw new TxcNotSupportException(e, String.format("获取表%s table_schema 时出现异常", TableSchemaCacheLoader.this.tableName));
                         }
 
                         try {
                             if (!LRUCache.tableSchemaCacheContain(TableSchemaCacheLoader.this.tableName)) {
                                 schema.setTableName(TableSchemaCacheLoader.this.tableName);
-                                Field f_fields = rsm.getClass().getDeclaredField("fields");
+                                Field f_fields = rsm.getClass().getDeclaredField("fields");  // todo ? ResultSetMetaData对象没有名为fields这个字段..
                                 f_fields.setAccessible(true);
                                 com.mysql.jdbc.Field[] fields = (com.mysql.jdbc.Field[])((com.mysql.jdbc.Field[])f_fields.get(rsm));
                                 List<String> fs = (List)Arrays.asList(fields).stream().map(new Function<com.mysql.jdbc.Field, String>() {
                                     public String apply(com.mysql.jdbc.Field t) {
                                         try {
                                             return t.getName().toLowerCase();
-                                        } catch (Exception var3) {
-                                            throw new TxcNotSupportException(var3, String.format("获取表%s 列失败", TableSchemaCacheLoader.this.tableName));
+                                        } catch (Exception e) {
+                                            throw new TxcNotSupportException(e, String.format("获取表%s 列失败", TableSchemaCacheLoader.this.tableName));
                                         }
                                     }
                                 }).collect(Collectors.toList());
                                 schema.setColumns(fs);
                             }
 
+//                            List<String> fs = new ArrayList<>();
+//                            for (int i = 0; i < rsm.getColumnCount(); i++) {
+//                                String columnName = rsm.getColumnName(i).toLowerCase();
+//                                fs.add(columnName);
+//                            }
+//                            schema.setColumns(fs);
+
                             return null;
-                        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException var6) {
-                            throw new TxcNotSupportException(var6, String.format("获取表%s table_schema 时出现异常", TableSchemaCacheLoader.this.tableName));
+                        } catch (SecurityException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException e) {
+                            throw new TxcNotSupportException(e, String.format("获取表%s table_schema 时出现异常", TableSchemaCacheLoader.this.tableName));
                         }
                     }
                 });
@@ -158,7 +170,4 @@ public class TableSchemaCacheLoader implements Callable<TableSchema> {
         }
     }
 
-    public TableSchema call() throws Exception {
-        return this.loadSchema();
-    }
 }

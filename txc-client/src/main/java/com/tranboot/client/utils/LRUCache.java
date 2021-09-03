@@ -30,9 +30,6 @@ public class LRUCache {
     private static final Cache<String, SqlTransformResult> dbsyncSqlTransformCache;         // sql -> SqlTransformResult
     private static final Cache<String, TxcSQLTransform> txcSQLTransformCache;               // sql -> TxcSQLTransform
 
-    public LRUCache() {
-    }
-
     public static final void cacheDbsyncSqlTransformResult(String sql, SqlTransformResult result) {
         dbsyncSqlTransformCache.put(sql, result);
     }

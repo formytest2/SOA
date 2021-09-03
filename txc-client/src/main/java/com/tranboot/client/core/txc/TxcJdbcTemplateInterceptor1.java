@@ -41,7 +41,7 @@ public class TxcJdbcTemplateInterceptor1 extends AbstractJdbcTemplateInterceptor
             String txc = TxcRollbackSqlManagerV2.txc(message);
             Object[] arguments = invocation.getArguments();
             String sql = (String)arguments[0];
-            final TxcSQLTransform transformed = LRUCache.getTxcTransformedSql(sql);
+            final TxcSQLTransform transformed = LRUCache.getTxcTransformedSql(sql);         // insert、update语句加上txc字段
             TxcSQL txcSql = LRUCache.getTxcSql(transformed.sql, new Callable<TxcSQL>() {
                 public TxcSQL call() throws Exception {
                     return (new TxcSqlProcessorWraper(transformed.sql, proxyedObject, TxcJdbcTemplateInterceptor1.this.dbType, TxcJdbcTemplateInterceptor1.this.datasource)).parse();

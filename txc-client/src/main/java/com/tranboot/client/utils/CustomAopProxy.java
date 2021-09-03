@@ -17,8 +17,6 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.ObjectUtils;
 
 public class CustomAopProxy {
-    public CustomAopProxy() {
-    }
 
     public static Class<?> getTargetClass(Object object) {
         return ClassUtils.isCglibProxy(object) ? object.getClass().getSuperclass() : object.getClass();

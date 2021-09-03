@@ -44,9 +44,6 @@ public class MetricsReporter {
     public static final Timer queryManualRollbackSql;
     public static final Timer invokeTimer;
 
-    public MetricsReporter() {
-    }
-
     public static Timer timer(String name) {
         return metrics.timer(name);
     }

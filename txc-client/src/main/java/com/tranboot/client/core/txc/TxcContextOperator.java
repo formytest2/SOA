@@ -1,6 +1,7 @@
 package com.tranboot.client.core.txc;
 
 public class TxcContextOperator {
+
     private static ITxcContextOperate operate = null;
 
     public static Object getContextParam(String key) {
@@ -23,7 +24,7 @@ public class TxcContextOperator {
         if (operate == null) {
             operate = new TxcContextOperateByThreadLocal();
         }
-
     }
+
 }
 

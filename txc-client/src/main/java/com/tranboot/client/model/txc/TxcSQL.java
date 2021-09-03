@@ -8,7 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public interface TxcSQL {
-    List<TxcSQL.RollbackSqlInfo> rollbackSql(Object[] var1, JdbcTemplate var2);
+
+    // 生成回滚sql
+    List<TxcSQL.RollbackSqlInfo> rollbackSql(Object[] args, JdbcTemplate jdbcTemplate);
 
     SQLType getSqlType();
 

@@ -40,6 +40,9 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+/**
+ * txc sql解析处理器
+ */
 public class TxcSqlParserProcessor implements TxcSqlProcessor {
     SQLStatement statement;
     SQLUpdateBuilderImpl updateBuilder;
@@ -67,7 +70,7 @@ public class TxcSqlParserProcessor implements TxcSqlProcessor {
     public SqlParserTxcSQL parse() {
         Context context = MetricsReporter.parserProcessorTimer.time();
 
-        SqlParserTxcSQL var2;
+        SqlParserTxcSQL sqlParserTxcSQL;
         try {
             this.result = new SqlParserTxcSQL();
             this.queryBuilder = new UniqColumnSQLSelectBuilderImpl(this.dbType);
@@ -101,12 +104,12 @@ public class TxcSqlParserProcessor implements TxcSqlProcessor {
             this.result.tableName = this.tableName;
             this.result.where = null;
             logger.debug("原sql:{} 解析出来的sql:{}", SQLUtils.toSQLString(this.statement, this.dbType), SQLUtils.toSQLString(this.result.rollbackSql, this.dbType));
-            var2 = this.result;
+            sqlParserTxcSQL = this.result;
         } finally {
             context.stop();
         }
 
-        return var2;
+        return sqlParserTxcSQL;
     }
 
     private static String deleteSingleQuote(String item) {

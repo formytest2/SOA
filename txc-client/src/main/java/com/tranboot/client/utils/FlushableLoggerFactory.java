@@ -23,9 +23,6 @@ public class FlushableLoggerFactory {
     private static final String LAYOUT_PATTERN = "%msg%n";
     private static final String MAX_LOG_FILE_SIZE = "50MB";
 
-    public FlushableLoggerFactory() {
-    }
-
     public static FlushableLoggerFactory.FlushableLogger getLogger(Logger logger) {
         if (logger instanceof ch.qos.logback.classic.Logger) {
             ch.qos.logback.classic.Logger _logger = (ch.qos.logback.classic.Logger)logger;

@@ -35,9 +35,9 @@ public class SqlParserService {
     public SqlParserService() {
         try {
             this.parseXml();
-        } catch (Exception var2) {
-            var2.printStackTrace();
-            throw new RuntimeException(var2.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 

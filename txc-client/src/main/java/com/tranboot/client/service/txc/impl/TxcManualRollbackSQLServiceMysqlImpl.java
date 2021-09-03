@@ -13,7 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
 
-/** @deprecated */
+/**
+ * txc事务手动回滚sql配置 mysql实现
+ *      即使用txc_manual_rollback_sql表 保存原始sql->回滚sql的关系
+ */
 @Deprecated
 public class TxcManualRollbackSQLServiceMysqlImpl extends TxcManualRollbackSqlService {
     int systemId;
@@ -55,8 +58,8 @@ public class TxcManualRollbackSQLServiceMysqlImpl extends TxcManualRollbackSqlSe
             }
 
             this.logger.debug("加载数据库缓存结束,共读取到{}条数据", this.rollbackCache.size());
-        } catch (Exception var15) {
-            throw new TxcTransactionException(var15, "txc_manual_rollback_sql查询失败");
+        } catch (Exception e) {
+            throw new TxcTransactionException(e, "txc_manual_rollback_sql查询失败");
         } finally {
             try {
                 if (con != null) {
@@ -64,10 +67,10 @@ public class TxcManualRollbackSQLServiceMysqlImpl extends TxcManualRollbackSqlSe
                 }
 
                 context.stop();
-            } catch (SQLException var14) {
-                this.logger.error("手动释放连接失败", var14);
+            } catch (SQLException e) {
+                this.logger.error("手动释放连接失败", e);
                 context.stop();
-                throw new TxcTransactionException(var14, "释放连接失败");
+                throw new TxcTransactionException(e, "释放连接失败");
             }
         }
     }

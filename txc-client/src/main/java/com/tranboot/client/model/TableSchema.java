@@ -7,13 +7,16 @@ import java.util.List;
 import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
+/**
+ * 表信息
+ */
 public class TableSchema {
-    private String tableName;
-    private String dbName;
-    private List<String> primaryKeyStrs = new ArrayList();
-    private Collection<List<String>> uniqKeyStrs;
-    private String shardField;
-    private List<String> columns;
+    private String tableName;                                   // 表名
+    private String dbName;                                      // 数据库名 (如果使用了mycat,这个库名可能是逻辑库名)
+    private List<String> primaryKeyStrs = new ArrayList();      // 主键索引对应的列名
+    private Collection<List<String>> uniqKeyStrs;               // 唯一索引对应的列名集合(不包含第一列)
+    private String shardField;                                  // 分库字段
+    private List<String> columns;                               // 列名集合
 
     public TableSchema() {
     }

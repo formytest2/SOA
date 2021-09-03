@@ -1,8 +1,6 @@
 package com.tranboot.client.utils;
 
 public class SystemExit {
-    public SystemExit() {
-    }
 
     public static void exit(String msg) {
         System.out.println("--------------------------------->" + msg + "<---------------------------------------");

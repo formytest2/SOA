@@ -21,7 +21,6 @@ public class ContextUtils {
         if (ContextUtils.applicationContext == null) {
             ContextUtils.applicationContext = applicationContext;
         }
-
     }
 
     public static ApplicationContext getApplicationContext() {

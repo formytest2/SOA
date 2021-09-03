@@ -1,6 +1,7 @@
 package com.tranboot.client.utils;
 
 public class LoggerUtils {
+
     public static final String DATASOURCE_MANAGER_INTERCEPTOR = "TxcDSManagerInterceptor";
     public static final String JDBCTEMPLATE_INTERCEPTOR = "TxcJDBCTemplateInterceptor";
     public static final String LRU_CACHE = "TxcLRUCache";
@@ -12,7 +13,5 @@ public class LoggerUtils {
     public static final String SERVICE = "TxcService";
     public static final String RED_LOCK = "TxcRedLock";
 
-    public LoggerUtils() {
-    }
 }
 

@@ -57,7 +57,11 @@ import org.springframework.transaction.PlatformTransactionManager;
  * 		        <property name="systemName" value="order" />
  * 		        <property name="systemId" value="2" />
  * 		        <property name="txcMqNameServerAddr" value="${mq.name.server.addr}" />
+ * 		        <property name="manualSql" value="" />
  * 	        </bean>
+ *
+ * 	    另一种方式：直接在主启动类上加 @EnableTxc ,会自动导入TxcModuleInitializeRegistrar，并加载TxcTransactionScaner
+ * 	                @see com.tranboot.client.spring.EnableTxc
  *
  *      BeanDefinitionRegistryPostProcessor 继承了 BeanFactoryPostProcessor(bean工厂后置处理器) 主要作用了注册bean定义以及注册bean
  *      AbstractAutoProxyCreator(创建自动代理) 实现了BeanPostProcessor接口 用于在 bean 初始化完成之后创建它的代理
@@ -70,7 +74,7 @@ public class TxcTransactionScaner extends AbstractAutoProxyCreator implements In
     private String systemName;
     private Integer systemId;
     private String txcMqNameServerAddr;
-    private String manualSql;
+    private String manualSql;                   // 手动回滚sql的xml配置文件
     private TxcMethodInterceptor interceptor;
 
     // 注册TxcMqService
@@ -107,11 +111,12 @@ public class TxcTransactionScaner extends AbstractAutoProxyCreator implements In
 
     @Override
     public void customizeProxyFactory(ProxyFactory proxyFactory) {
-        proxyFactory.setFrozen(true);
+        proxyFactory.setFrozen(true);           // 冻结配置 冻结之后advice就不能再修改
         this.setFrozen(true);
         proxyFactory.setExposeProxy(true);
     }
 
+    // 初始化之后创建代理对象
     @Override
     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
         Class<?> localClass = bean.getClass();
@@ -241,6 +246,7 @@ public class TxcTransactionScaner extends AbstractAutoProxyCreator implements In
         ContextUtils.setApplicationContext(applicationContext);
     }
 
+    // 【初始化的核心 注册了TxcManualRollbackSqlService和TxcShardSettingReader】
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         this.registryTxcManualRollbackSqlService(beanFactory);

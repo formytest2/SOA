@@ -5,8 +5,6 @@ import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 
 public class SHAHashUtils {
-    public SHAHashUtils() {
-    }
 
     public static Hasher createHasher() {
         return Hashing.sha256().newHasher();

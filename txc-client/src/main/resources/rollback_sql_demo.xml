@@ -1,0 +1,24 @@
+<root>
+    <sql1>
+        <system_id></system_id>
+        <original_sql></original_sql>
+        <rollback_sql></rollback_sql>
+        <indexs></indexs>
+        <table></table>
+        <sql_type></sql_type>
+        <primary_key></primary_key>
+        <primary_value_index></primary_value_index>
+        <shard_value_index></shard_value_index>
+    </sql1>
+    <sql2>
+        <system_id></system_id>
+        <original_sql></original_sql>
+        <rollback_sql></rollback_sql>
+        <indexs></indexs>
+        <table></table>
+        <sql_type></sql_type>
+        <primary_key></primary_key>
+        <primary_value_index></primary_value_index>
+        <shard_value_index></shard_value_index>
+    </sql2>
+</root>

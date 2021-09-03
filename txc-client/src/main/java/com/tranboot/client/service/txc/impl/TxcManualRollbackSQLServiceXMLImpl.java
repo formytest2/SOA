@@ -10,6 +10,9 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
+/**
+ * txc事务手动回滚sql配置 xml实现
+ */
 public class TxcManualRollbackSQLServiceXMLImpl extends TxcManualRollbackSqlService {
     private String xmlFile;
 
@@ -21,8 +24,8 @@ public class TxcManualRollbackSQLServiceXMLImpl extends TxcManualRollbackSqlServ
     public void init() {
         try {
             this.parseXML();
-        } catch (Exception var2) {
-            throw new TxcTransactionException(var2, var2.getMessage());
+        } catch (Exception e) {
+            throw new TxcTransactionException(e, e.getMessage());
         }
     }
 
