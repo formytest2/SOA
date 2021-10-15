@@ -116,7 +116,14 @@ public class TxcTransactionScaner extends AbstractAutoProxyCreator implements In
         proxyFactory.setExposeProxy(true);
     }
 
-    // 初始化之后创建代理对象
+    /**
+     * 初始化之后创建代理对象
+     *      对JdbcTemplate、PlatformTransactionManager以及@TxcTransaction注解的类进行代理
+     * @param bean
+     * @param beanName
+     * @param cacheKey
+     * @return
+     */
     @Override
     protected Object wrapIfNecessary(Object bean, String beanName, Object cacheKey) {
         Class<?> localClass = bean.getClass();

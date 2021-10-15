@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import tk.mybatis.mapper.entity.Example;
 import tk.mybatis.mapper.util.Sqls;
 
+import java.util.Date;
+
 @Service
 @Slf4j
 public class CallBackService {
@@ -24,17 +26,19 @@ public class CallBackService {
 
     public void doAfterNotify(BaseResponse res) {
         if (res.getCode().equals(RespEnum.SUCCESS.getStatus())) {
-            markOrderAsPaySuccess(res.getOutTradeNo(), res.getTransactionId(), res.getTotalFee());
+            markOrderAsPaySuccess(res.getOutTradeNo(), res.getTransactionId(), res.getTotalFee(), res.getExt1());
         }
     }
 
-    private void markOrderAsPaySuccess(String outTradeNo, String trans, Double totalFee) {
+    private void markOrderAsPaySuccess(String outTradeNo, String trans, Double totalFee, String ext1) {
         log.info("markOrderAsPaySuccess ,outTradeNo = [" + outTradeNo + "], trans = [" + trans + "], totalFee = [" + totalFee + "]");
         PayOrderInfo t = new PayOrderInfo();
         t.setTradeStatus(TradeStatusEnum.SUCCESS.getStatus());
         t.setTotalFee(totalFee);
         t.setTransactionId(trans);
         t.setOutTradeNo(outTradeNo);
+        t.setExt1(ext1);
+        t.setUpdateTime(new Date());
         Example example = Example.builder(PayOrderInfo.class).andWhere(Sqls.custom().andEqualTo(PayOrderInfo.OUT_TRADE_NO, outTradeNo)).build();
         int i = payOrderInfoMapper.updateByExampleSelective(t, example);
         if (i != 1) {

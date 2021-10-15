@@ -22,4 +22,7 @@ public class Constants {
 
 //    public final static int SHARD_COUNT = 4;
 
+    public static final String CCB_PAY_TYPE = "86"; // 建行龙支付类型
+    public static final String DCEP_PAY_TYPE = "96";// 建行数币支付类型
+
 }
