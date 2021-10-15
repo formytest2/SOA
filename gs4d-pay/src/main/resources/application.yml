@@ -22,6 +22,8 @@ dubbo:
 config:
   paymentTypes:
     0: testPaymentImpl
+    86: ccbPayServiceImpl
+    96: dcepPayServiceImpl
 
 restTemplateConnectTimeout: 60000
 restTemplateReadTimeout: 60000
