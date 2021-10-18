@@ -3,6 +3,7 @@ package com.github.bluecatlee.gs4d.pay.aspect;
 import com.github.bluecatlee.gs4d.pay.annotation.Callback;
 import com.github.bluecatlee.gs4d.pay.constant.Constants;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,11 +18,15 @@ import java.net.URI;
 /**
  * 异步回调拦截
  *
+ *      注意 针对回调controller接口的切面 必须设置成非懒加载的bean 否则项目重启后 第一次回调进来后才会创建该切面 导致回调处理时间延长 以至于第二次回调又进来了
+ *      当然业务代码必须保证能够幂等处理重复回调
+ *
  * @Author Bluecatlee
  * @Date 2021/10/12 16:53
  */
 @ControllerAdvice
 @Slf4j
+@Lazy(false)
 public class PayCallbackAspect implements ResponseBodyAdvice {
 
 
