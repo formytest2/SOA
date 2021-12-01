@@ -24,6 +24,7 @@ config:
     0: testPaymentImpl
     86: ccbPayServiceImpl
     96: dcepPayServiceImpl
+    97: abcPayServiceImpl
 
 restTemplateConnectTimeout: 60000
 restTemplateReadTimeout: 60000

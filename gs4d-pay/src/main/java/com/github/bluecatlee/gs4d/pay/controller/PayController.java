@@ -61,7 +61,7 @@ public class PayController {
         String pay = payService.pay(JSON.toJSONString(baseRequest), RequestMethodEnum.NOTIFY.getMethod());
         String resBody = JSON.parseObject(pay, BaseResponse.class).getResBody();
 
-        return resBody;
+        return resBody == null ? "" : resBody;
     }
 
     @RequestMapping("/recall")

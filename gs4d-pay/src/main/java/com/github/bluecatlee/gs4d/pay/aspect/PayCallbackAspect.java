@@ -21,6 +21,9 @@ import java.net.URI;
  *      注意 针对回调controller接口的切面 必须设置成非懒加载的bean 否则项目重启后 第一次回调进来后才会创建该切面 导致回调处理时间延长 以至于第二次回调又进来了
  *      当然业务代码必须保证能够幂等处理重复回调
  *
+ *      注意ResponseBodyAdvice有个坑
+ *          如果controller返回null 则ResponseBodyAdvice不生效
+ *
  * @Author Bluecatlee
  * @Date 2021/10/12 16:53
  */
@@ -60,7 +63,7 @@ public class PayCallbackAspect implements ResponseBodyAdvice {
             log.error("PayCallbackAspect获取通用回调入口的platType参数失败...");
             return o;
         }
-        if (Constants.CCB_PAY_TYPE.equals(platType) || Constants.DCEP_PAY_TYPE.equals(platType)) {
+        if (Constants.CCB_PAY_TYPE.equals(platType) || Constants.DCEP_PAY_TYPE.equals(platType) || Constants.ABC_PAY_TYPE.equals(platType)) {
             if (o instanceof String) {
                 String result = (String)o;
                 if (!result.equals("success")) {
